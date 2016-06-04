@@ -31,7 +31,7 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Laurent/api.git"
+    "url": "git://git.laurentjanet.fr:movie-index/api.git"
   },
   "author": "Laurent",
   "license": ""
