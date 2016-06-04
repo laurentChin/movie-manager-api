@@ -33,6 +33,6 @@
     "type": "git",
     "url": "git://git.laurentjanet.fr:movie-index/api.git"
   },
-  "author": "Laurent",
+  "author": "Laurent Janet <laurent.janet@gmail.com>",
   "license": ""
 }
