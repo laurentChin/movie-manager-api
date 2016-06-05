@@ -53,4 +53,19 @@ describe('MovieModel', () => {
         .catch(done);
     });
   });
+
+  describe('#destroy', () => {
+    it('should check destroy function', done => {
+      Movie.create(movie)
+        .then(result => {
+          Movie
+            .destroy(result.id)
+            .then(destroyResult => {
+              destroyResult[0].title.should.equal(movie.title);
+              done();
+            });
+        })
+        .catch(done);
+    });
+  });
 });
