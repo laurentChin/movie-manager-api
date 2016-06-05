@@ -27,6 +27,7 @@
   "scripts": {
     "debug": "node debug app.js",
     "start": "node app.js",
+    "pretest": "eslint api/models/*.js api/controllers/*.js; exit 0",
     "test": "node ./node_modules/mocha/bin/mocha test/bootstrap.test.js test/integration/**/*.test.js"
   },
   "main": "app.js",
