@@ -3,7 +3,7 @@
 var should = require('chai').should();
 
 describe('MovieModel', () => {
-  describe('#create', () => {
+  describe('#create()', () => {
     it('should check create function', done => {
       Movie.should.have.property('create');
       Movie
