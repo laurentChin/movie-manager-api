@@ -7,8 +7,14 @@ before(function(done) {
 
   sails.lift({
     // configuration for testing purposes
+    connections: {
+      memory: {
+        adapter: 'sails-memory'
+      }
+    },
     models : {
-      migrate : 'drop'
+      migrate : 'drop',
+      connection: 'memory'
     },
     port: 1789
   }, function(err, server) {
