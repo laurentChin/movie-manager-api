@@ -54,7 +54,7 @@ describe('MovieModel', () => {
     });
   });
 
-  describe('#destroy', () => {
+  describe('#destroy()', () => {
     it('should check destroy function', done => {
       Movie.create(movie)
         .then(result => {
