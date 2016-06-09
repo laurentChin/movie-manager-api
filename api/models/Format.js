@@ -1,11 +1,20 @@
 /**
  * Format.js
  *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @description :: Format element composed with title and icon
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
 module.exports = {
-  attributes: {}
+  attributes: {
+    title: {
+      type: 'string',
+      required: true
+    },
+    icon: {
+      type: 'string',
+      required: true
+    }
+  }
 };
 
