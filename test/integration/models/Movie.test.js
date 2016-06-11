@@ -5,7 +5,8 @@ let movie = {
   title: 'Will Hunting',
   originalTitle: 'Good Will Hunting',
   theaterReleaseDate: new Date('01 January 1997 00:00 UTC'),
-  duration: 126
+  duration: 126,
+  cover: 'http://placehold.it/25x25'
 };
 
 describe('MovieModel', () => {
@@ -22,6 +23,7 @@ describe('MovieModel', () => {
           result.originalTitle.should.equal('Good Will Hunting');
           result.duration.should.equal(126);
           result.theaterReleaseDate.toISOString().should.equal('1997-01-01T00:00:00.000Z');
+          result.cover.should.equal('http://placehold.it/25x25');
           done();
         })
         .catch(done);

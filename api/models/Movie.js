@@ -1,7 +1,7 @@
 /**
  * Movie.js
  *
- * @description :: Movie element composed with title, originalTitle, duration and theaterReleaseDate
+ * @description :: Movie element composed with title, originalTitle, cover, duration and theaterReleaseDate
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
@@ -13,6 +13,10 @@ module.exports = {
       required: true
     },
     originalTitle: {
+      type: 'string',
+      required: true
+    },
+    cover: {
       type: 'string',
       required: true
     },
