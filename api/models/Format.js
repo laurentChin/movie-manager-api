@@ -14,6 +14,10 @@ module.exports = {
     icon: {
       type: 'string',
       required: true
+    },
+    movies: {
+      collection: 'movie',
+      via: 'formats'
     }
   }
 };

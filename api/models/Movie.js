@@ -23,6 +23,10 @@ module.exports = {
     theaterReleaseDate: {
       type: 'datetime',
       required: true
+    },
+    formats: {
+      collection: 'format',
+      via: 'movies'
     }
   }
 };
