@@ -20,6 +20,7 @@ describe('MovieModel', () => {
           result.should.have.property('createdAt');
           result.should.have.property('updatedAt');
           result.title.should.equal('Will Hunting');
+          result.slug.should.equal('will-hunting');
           result.originalTitle.should.equal('Good Will Hunting');
           result.duration.should.equal(126);
           result.theaterReleaseDate.toISOString().should.equal('1997-01-01T00:00:00.000Z');

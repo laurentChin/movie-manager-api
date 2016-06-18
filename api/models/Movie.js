@@ -12,6 +12,10 @@ module.exports = {
       type: 'string',
       required: true
     },
+    slug: {
+      type: 'slug',
+      from: 'title'
+    },
     originalTitle: {
       type: 'string',
       required: true
