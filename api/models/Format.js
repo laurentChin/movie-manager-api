@@ -11,6 +11,10 @@ module.exports = {
       type: 'string',
       required: true
     },
+    slug: {
+      type: 'slug',
+      from: 'title'
+    },
     icon: {
       type: 'string',
       required: true

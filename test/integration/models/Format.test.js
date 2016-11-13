@@ -14,6 +14,7 @@ describe('FormatModel', () => {
       Format.create(format)
         .then(result => {
           result.title.should.equal(format.title);
+          result.slug.should.equal('blu-ray');
           result.icon.should.equal(format.icon);
           done();
         })
