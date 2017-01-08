@@ -4,3 +4,4 @@ api:
     - "1337:1337"
   volumes:
     - .:/var/www
+  command: bash -c "service mongod start && sails lift"
