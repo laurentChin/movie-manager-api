@@ -4,11 +4,14 @@
   "version": "0.0.0",
   "description": "API Part of my Movie manager projet",
   "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.14.1"
+  },
   "scripts": {
     "debug": "node debug app.js",
     "start": "node app.js",
-    "pretest": "eslint app.js src/**/*.js; exit 0"
+    "pretest": "eslint app.js src/**/*.js; exit 0",
+    "watch": "nodemon app.js"
   },
   "main": "app.js",
   "repository": {
@@ -17,5 +20,7 @@
   },
   "author": "Laurent Janet <laurent.janet@gmail.com>",
   "license": "",
-  "devDependencies": {}
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
 }
