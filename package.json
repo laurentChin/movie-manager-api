@@ -11,7 +11,8 @@
     "debug": "node debug app.js",
     "start": "node app.js",
     "pretest": "eslint app.js src/**/*.js; exit 0",
-    "watch": "nodemon app.js"
+    "test": "tape 'tests/**/*.js' | tap-spec",
+    "watch": "nodemon --debug app.js"
   },
   "main": "app.js",
   "repository": {
@@ -21,6 +22,11 @@
   "author": "Laurent Janet <laurent.janet@gmail.com>",
   "license": "",
   "devDependencies": {
-    "nodemon": "^1.11.0"
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1",
+    "nodemon": "^1.11.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.3"
   }
 }
