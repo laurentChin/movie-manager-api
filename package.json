@@ -11,7 +11,7 @@
     "debug": "node debug app.js",
     "start": "node app.js",
     "pretest": "eslint app.js src/**/*.js; exit 0",
-    "test": "tape 'tests/**/*.js' | tap-spec",
+    "test": "tape 'tests/**/*.js' | tap-spec; exit 0",
     "watch": "nodemon --debug app.js"
   },
   "main": "app.js",
