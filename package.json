@@ -8,11 +8,12 @@
     "express": "^4.15.4"
   },
   "scripts": {
-    "debug": "node debug app.js",
-    "start": "node app.js",
-    "pretest": "eslint app.js src/**/*.js; exit 0",
-    "test": "tape 'tests/**/*.js' | tap-spec; exit 0",
-    "watch": "nodemon --debug app.js"
+    "debug": "node debug --experimental-modules app.mjs",
+    "prestart": "npm run test",
+    "start": "node --experimental-modules app.mjs",
+    "pretest": "eslint app.mjs src/**/*.mjs; exit 0",
+    "test": "tape 'tests/**/*.mjs' | tap-spec; exit 0",
+    "watch": "nodemon --debug --experimental-modules app.mjs"
   },
   "main": "app.js",
   "repository": {
