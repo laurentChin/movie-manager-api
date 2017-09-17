@@ -1,4 +1,7 @@
 import express from 'express';
+
+import environment from './environment.json';
+
 const app = express();
 
-app.listen(3000, () => {});
+app.listen(environment.port, () => {});
