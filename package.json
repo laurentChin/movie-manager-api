@@ -5,7 +5,7 @@
   "description": "API Part of my Movie manager projet",
   "keywords": [],
   "dependencies": {
-    "express": "^4.14.1"
+    "express": "^4.15.4"
   },
   "scripts": {
     "debug": "node debug app.js",
