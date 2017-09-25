@@ -1,4 +1,4 @@
-const SecurityRouterFactory = (router) => {
+const SecurityRouterFactory = router => {
   return router;
 };
 
