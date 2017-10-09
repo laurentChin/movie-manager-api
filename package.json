@@ -12,7 +12,15 @@
     "prestart": "npm run test",
     "start": "nodemon --inspect --experimental-modules app.mjs",
     "pretest": "eslint app.mjs src/**/*.mjs; exit 0",
-    "test": "tape 'tests/**/*.mjs' | tap-spec; exit 0"
+    "test": "ava; exit 0"
+  },
+  "ava": {
+    "files": "tests/**/*.js",
+    "verbose": true,
+    "watch": true,
+    "require": [
+      "@std/esm"
+    ]
   },
   "main": "app.js",
   "repository": {
@@ -22,6 +30,8 @@
   "author": "Laurent Janet <laurent.janet@gmail.com>",
   "license": "",
   "devDependencies": {
+    "@std/esm": "^0.11.3",
+    "ava": "^0.22.0",
     "eslint": "^4.7.0",
     "eslint-config-standard": "^10.2.0",
     "eslint-plugin-import": "^2.7.0",
