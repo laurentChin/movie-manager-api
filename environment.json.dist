@@ -1,3 +1,9 @@
 {
-  "port": 8000
+  "port": 8000,
+  "facebook": {
+    "url": "https://graph.facebook.com/v2.11/oauth/access_token",
+    "appId": "",
+    "redirectUri": "",
+    "appSecret": ""
+  }
 }
