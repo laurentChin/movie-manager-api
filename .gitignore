@@ -1,5 +1,6 @@
 environment.json
 node_modules
+.esm-cache
 
 ################################################
 # Node.js / NPM
