@@ -26,9 +26,13 @@ test('buildAccessTokenRequestUrl url must build a valid facebook token url', t =
 });
 
 test('facebookProvider default export must an object', t => {
-  t.is('object', typeof facebookProvider);
+  t.is('object', typeof facebookProvider.default);
 });
 
 test('facebookProvider default export must own a buildAccessTokenRequest property', t => {
-  t.truthy(facebookProvider.hasOwnProperty('buildAccessTokenRequest'));
+  t.truthy(facebookProvider.default.hasOwnProperty('buildAccessTokenRequest'));
+});
+
+test('facebookProvider default export must own an authenticate property', t => {
+  t.truthy(facebookProvider.default.hasOwnProperty('authenticate'));
 });
