@@ -16,6 +16,7 @@
   },
   "ava": {
     "files": "tests/**/*.js",
+    "sources": "src/**/*.js",
     "verbose": true,
     "watch": true,
     "require": [
