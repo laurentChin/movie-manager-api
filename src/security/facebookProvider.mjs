@@ -1,5 +1,17 @@
 import environment from '../../environment.json';
 
+const facebookProvider = {
+  buildAccessTokenRequest: buildAccessTokenRequest.bind(
+    null,
+    {
+      url: buildRequestUrl(environment.facebook.baseUrl, environment.facebook.accessTokenEndpoint),
+      appId: environment.facebook.appId,
+      redirectUri: environment.facebook.redirectUri,
+      appSecret: environment.facebook.appSecret
+    }
+  ),
+};
+
 /**
  * build the facebook access token request
  * @param appId
@@ -12,27 +24,17 @@ function buildAccessTokenRequest ({url, appId, redirectUri, appSecret}, code) {
 }
 
 /**
- * build the facebook access token request base url
+ * build a facebook graph request base url
  * @param baseUrl
  * @param endpoint
  */
-function buildAccessTokenRequestUrl (baseUrl, endpoint) {
+function buildRequestUrl (baseUrl, endpoint) {
   return `${baseUrl}/${endpoint}`;
 }
 
 export {
-  buildAccessTokenRequestUrl,
+  buildRequestUrl,
   buildAccessTokenRequest
 };
 
-export default {
-  buildAccessTokenRequest: buildAccessTokenRequest.bind(
-    null,
-    {
-      url: buildAccessTokenRequestUrl(...environment.facebook.baseUrl, ...environment.facebook.accessTokenEndpoint),
-      ...environment.facebook.appId,
-      ...environment.facebook.redirectUri,
-      ...environment.facebook.appSecret
-    }
-  )
-};
+export default facebookProvider;
