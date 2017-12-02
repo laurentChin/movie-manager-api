@@ -1,8 +1,21 @@
 import test from 'ava';
-import facebookProvider, {buildAccessTokenRequest, buildRequestUrl } from '../../src/security/facebookProvider';
+import facebookProvider,
+{
+  buildAccessTokenRequest,
+  buildRequestUrl,
+  buildDebugTokenRequest
+} from '../../src/security/facebookProvider';
 
 test('facebookProvider default export must an object', t => {
   t.is('object', typeof facebookProvider.default);
+});
+
+test('buildRequestUrl url must build a valid facebook token url', t => {
+  const expected = 'https://graph.facebook.com/v2.11/oauth/access_token';
+  t.is(
+    expected,
+    buildRequestUrl('https://graph.facebook.com', 'v2.11/oauth/access_token')
+  );
 });
 
 test('facebookProvider default export must own a buildAccessTokenRequest property', t => {
@@ -25,11 +38,17 @@ test('buildAccessTokenRequest must build a valid facebook access token request',
   );
 });
 
-test('buildRequestUrl url must build a valid facebook token url', t => {
-  const expected = 'https://graph.facebook.com/v2.11/oauth/access_token';
+test('buildDebugTokenRequest must build a valid facebook debug token request', t => {
+  const expected = 'https://graph.facebook.com/debug_token?input_token=inputToken&access_token=appSecret';
   t.is(
     expected,
-    buildRequestUrl('https://graph.facebook.com', 'v2.11/oauth/access_token')
+    buildDebugTokenRequest(
+      {
+        url: 'https://graph.facebook.com/debug_token',
+        appSecret: 'appSecret'
+      },
+      'inputToken'
+    )
   );
 });
 

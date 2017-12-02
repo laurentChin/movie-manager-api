@@ -24,6 +24,17 @@ function buildAccessTokenRequest ({url, appId, redirectUri, appSecret}, code) {
 }
 
 /**
+ * build the facebook access token request
+ * @param appId
+ * @param redirectUri
+ * @param appSecret
+ * @param code
+ */
+function buildDebugTokenRequest ({url, appSecret}, token) {
+  return `${url}?input_token=${token}&access_token=${appSecret}`;
+}
+
+/**
  * build a facebook graph request base url
  * @param baseUrl
  * @param endpoint
@@ -34,7 +45,8 @@ function buildRequestUrl (baseUrl, endpoint) {
 
 export {
   buildRequestUrl,
-  buildAccessTokenRequest
+  buildAccessTokenRequest,
+  buildDebugTokenRequest
 };
 
 export default facebookProvider;
