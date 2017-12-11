@@ -1,13 +1,14 @@
 import test from 'ava';
+
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+
 import facebookProvider,
 {
   buildAccessTokenRequest,
   buildRequestUrl,
   buildDebugTokenRequest
 } from '../../src/security/facebookProvider';
-
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 
 import {
   facebookAccessTokenFakeResponse,
