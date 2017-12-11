@@ -4,8 +4,8 @@
     "baseUrl": "https://graph.facebook.com",
     "accessTokenEndpoint": "v2.11/oauth/access_token",
     "debugTokenEndpoint": "debug_token",
-    "appId": "",
+    "appId": 138483919580948,
     "redirectUri": "",
-    "appSecret": ""
+    "appSecret": "appsecret"
   }
 }

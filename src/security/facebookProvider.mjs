@@ -1,4 +1,7 @@
-import environment from '../../environment.json';
+import environment from '../../environment';
+import axios from 'axios';
+
+import FacebookAuthError from './facebookAuthError';
 
 const facebookProvider = {
   buildAccessTokenRequest: buildAccessTokenRequest.bind(
@@ -10,6 +13,14 @@ const facebookProvider = {
       appSecret: environment.facebook.appSecret
     }
   ),
+  buildDebugTokenRequest: buildDebugTokenRequest.bind(
+    null,
+    {
+      url: buildRequestUrl(environment.facebook.baseUrl, environment.facebook.debugTokenEndpoint),
+      appSecret: environment.facebook.appSecret
+    }
+  ),
+  authenticate: authenticate.bind(null, environment.facebook.appId)
 };
 
 /**
@@ -41,6 +52,23 @@ function buildDebugTokenRequest ({url, appSecret}, token) {
  */
 function buildRequestUrl (baseUrl, endpoint) {
   return `${baseUrl}/${endpoint}`;
+}
+
+async function authenticate (appId, code) {
+  const accessTokenRequestResponse = await axios.get(facebookProvider.buildAccessTokenRequest(code));
+
+  const { access_token } = accessTokenRequestResponse.data;
+  const debugTokenRequest = await axios.get(facebookProvider.buildDebugTokenRequest(access_token));
+  const { app_id, is_valid } = debugTokenRequest.data.data;
+
+  console.log('is_valid', is_valid);
+  // eslint-disable-next-line camelcase
+  if (app_id !== appId || !is_valid) {
+    throw new FacebookAuthError('invalid token');
+  }
+
+  // eslint-disable-next-line camelcase
+  return accessTokenRequestResponse.data;
 }
 
 export {

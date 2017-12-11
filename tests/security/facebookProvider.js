@@ -6,7 +6,16 @@ import facebookProvider,
   buildDebugTokenRequest
 } from '../../src/security/facebookProvider';
 
-test('facebookProvider default export must an object', t => {
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+
+import {
+  facebookAccessTokenFakeResponse,
+  facebookDebugTokenValidFakeResponse,
+  facebookDebugTokenInvalidFakeResponse
+} from '../_fixtures_';
+
+test('facebookProvider default export must be an object', t => {
   t.is('object', typeof facebookProvider.default);
 });
 
@@ -50,6 +59,47 @@ test('buildDebugTokenRequest must build a valid facebook debug token request', t
       'inputToken'
     )
   );
+});
+
+test.serial('authenticate must throw a FacebookAuthError when the accessToken is not valid', async t => {
+  let axiosMockForInvalidToken = new MockAdapter(axios);
+
+  axiosMockForInvalidToken
+    .onGet(/^https:\/\/graph.facebook.com\/v2.11\/oauth\/access_token/)
+    .reply(
+      200,
+      facebookAccessTokenFakeResponse
+    )
+    .onGet(/^https:\/\/graph.facebook.com\/debug_token/)
+    .reply(
+      200,
+      facebookDebugTokenInvalidFakeResponse
+    );
+
+  const error = await t.throws(facebookProvider.default.authenticate('code-parameter'));
+  t.is(error.message, 'invalid token');
+  t.is(error.name, 'FacebookAuthError');
+});
+
+test.serial('authenticate must return a validated facebook accessToken', async t => {
+  let axiosMockForValidToken = new MockAdapter(axios);
+
+  axiosMockForValidToken
+    .onGet(/^https:\/\/graph.facebook.com\/v2.11\/oauth\/access_token/)
+    .reply(
+      200,
+      facebookAccessTokenFakeResponse
+    )
+    .onGet(/^https:\/\/graph.facebook.com\/debug_token/)
+    .reply(
+      200,
+      facebookDebugTokenValidFakeResponse
+    );
+
+  const authenticateResponse = await facebookProvider.default.authenticate('code-parameter');
+  t.truthy(authenticateResponse.hasOwnProperty('access_token'));
+  t.truthy(authenticateResponse.hasOwnProperty('token_type'));
+  t.truthy(authenticateResponse.hasOwnProperty('expires_in'));
 });
 
 test('facebookProvider default export must own an authenticate property', t => {

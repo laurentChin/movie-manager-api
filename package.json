@@ -5,20 +5,23 @@
   "description": "API Part of my Movie manager projet",
   "keywords": [],
   "dependencies": {
+    "axios": "^0.17.1",
     "express": "^4.15.4"
   },
   "scripts": {
     "debug": "node debug --experimental-modules app.mjs",
-    "prestart": "npm run test",
-    "start": "nodemon --inspect --experimental-modules app.mjs",
+    "start": "NODE_ENV=${NODE_ENV:=production} nodemon --inspect --experimental-modules app.mjs",
     "pretest": "eslint app.mjs src/**/*.mjs; exit 0",
-    "test": "ava; exit 0"
+    "test": "NODE_ENV=test ava; exit 0",
+    "test:watch": "NODE_ENV=test ava --watch"
   },
   "ava": {
-    "files": "tests/**/*.js",
-    "sources": "src/**/*.js",
+    "files": [
+      "tests/**/*.js",
+      "!tests/_fixtures_/*"
+    ],
+    "sources": "src/**/*.mjs",
     "verbose": true,
-    "watch": true,
     "require": [
       "@std/esm"
     ]
@@ -33,6 +36,7 @@
   "devDependencies": {
     "@std/esm": "^0.11.3",
     "ava": "^0.22.0",
+    "axios-mock-adapter": "^1.10.0",
     "eslint": "^4.7.0",
     "eslint-config-standard": "^10.2.0",
     "eslint-plugin-import": "^2.7.0",
