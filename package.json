@@ -6,8 +6,7 @@
   "keywords": [],
   "dependencies": {
     "axios": "^0.17.1",
-    "express": "^4.15.4",
-    "redis": "^2.8.0"
+    "express": "^4.15.4"
   },
   "scripts": {
     "debug": "node debug --experimental-modules app.mjs",
