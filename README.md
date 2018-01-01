@@ -1,3 +1,3 @@
 # api
 
-API Part of my Movie manager projet build on top of ExpressJS
+API Part of my Movie manager project build on top of ExpressJS 
