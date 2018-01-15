@@ -7,5 +7,9 @@
     "appId": "",
     "redirectUri": "",
     "appSecret": ""
+  },
+  "mongodb": {
+    "url": "mongodb://localhost:27017",
+    "name": "movie-manager"
   }
 }
