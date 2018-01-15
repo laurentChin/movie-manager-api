@@ -1,7 +1,7 @@
-import express from 'express';
+import Koa from 'koa';
 
 import environment from './environment.json';
 
-const app = express();
+const app = new Koa();
 
-app.listen(environment.port, () => {});
+app.listen(environment.port);
