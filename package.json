@@ -6,7 +6,10 @@
   "keywords": [],
   "dependencies": {
     "axios": "^0.17.1",
-    "express": "^4.15.4"
+    "express": "^4.15.4",
+    "pg": "^6.4.2",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.28.6"
   },
   "scripts": {
     "debug": "node debug --experimental-modules app.mjs",
