@@ -57,11 +57,12 @@ function buildRequestUrl (baseUrl, endpoint) {
 async function authenticate (appId, code) {
   const accessTokenRequestResponse = await axios.get(facebookProvider.buildAccessTokenRequest(code));
 
+  // eslint-disable-next-line camelcase
   const { access_token } = accessTokenRequestResponse.data;
   const debugTokenRequest = await axios.get(facebookProvider.buildDebugTokenRequest(access_token));
+  // eslint-disable-next-line camelcase
   const { app_id, is_valid } = debugTokenRequest.data.data;
 
-  console.log('is_valid', is_valid);
   // eslint-disable-next-line camelcase
   if (app_id !== appId || !is_valid) {
     throw new FacebookAuthError('invalid token');

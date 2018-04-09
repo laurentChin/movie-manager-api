@@ -6,11 +6,11 @@
   "keywords": [],
   "dependencies": {
     "axios": "^0.17.1",
-    "koa": "^2.4.1",
-    "koa-router": "^7.3.0",
+    "koa": "^2.5.0",
+    "koa-router": "^7.4.0",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.28.6"
+    "sequelize": "^4.37.6"
   },
   "scripts": {
     "debug": "node debug --experimental-modules app.mjs",
@@ -40,15 +40,15 @@
   "devDependencies": {
     "@std/esm": "^0.11.3",
     "ava": "^0.22.0",
-    "axios-mock-adapter": "^1.10.0",
-    "eslint": "^4.7.0",
+    "axios-mock-adapter": "^1.15.0",
+    "eslint": "^4.19.1",
     "eslint-config-standard": "^10.2.0",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.0",
-    "nodemon": "^1.12.1",
+    "nodemon": "^1.17.3",
     "tap-spec": "^4.1.1",
-    "tape": "^4.8.0"
+    "tape": "^4.9.0"
   }
 }
