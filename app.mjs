@@ -1,6 +1,6 @@
 import express from 'express';
 
-import environment from './environment.json';
+import environment from './environment';
 
 const app = express();
 
