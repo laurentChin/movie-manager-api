@@ -8,8 +8,13 @@
     "redirectUri": "",
     "appSecret": ""
   },
-  "mongodb": {
-    "url": "mongodb://localhost:27017",
-    "name": "movie-manager"
+  "database": {
+    "name": "movie-manager",
+    "username": "username",
+    "password": "password",
+    "config" : {
+      "host": "localhost",
+      "dialect": "postgres"
+    }
   }
 }
