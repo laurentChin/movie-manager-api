@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 const loadEnvironment = (NODE_ENV) => {
   let environment;
 
