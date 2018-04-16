@@ -1,13 +1,7 @@
-import Koa from 'koa';
-import Router from 'koa-router';
+import express from 'express';
 
 import environment from './environment.json';
 
-import { SecurityRouterFactory } from './src/security';
+const app = express();
 
-const app = new Koa();
-
-const router = new Router();
-app
-  .use(SecurityRouterFactory(router).routes())
-  .listen(environment.port);
+app.listen(environment.port, () => {});
