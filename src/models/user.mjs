@@ -1,4 +1,4 @@
-function modelFactory (sequelize, DataTypes) {
+function userModelFactory (sequelize, DataTypes) {
   const User = sequelize.define(
     'User',
     {
@@ -26,4 +26,4 @@ function modelFactory (sequelize, DataTypes) {
   return User;
 }
 
-export default modelFactory;
+export default userModelFactory;
