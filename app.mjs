@@ -8,5 +8,5 @@ import { SecurityRouterFactory } from './src/security/router';
 const app = express();
 
 app
-  .use(SecurityRouterFactory(express.Router(), User))
+  .use(SecurityRouterFactory(express.Router(), User, environment.jwtSecretKey))
   .listen(environment.port, () => {});

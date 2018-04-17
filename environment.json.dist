@@ -1,5 +1,6 @@
 {
   "port": 8000,
+  "jwtSecretKey": "a secret key"
   "facebook": {
     "baseUrl": "https://graph.facebook.com",
     "accessTokenEndpoint": "v2.11/oauth/access_token",

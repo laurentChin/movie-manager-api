@@ -1,4 +1,4 @@
-function facebookAuthController (userModel, facebookProvider) {
+function facebookAuthController (userModel, facebookProvider, jwt, jwtSecretKey) {
   return async (request, response) => {
     try {
       const responseFromFacebookAuthentication = await facebookProvider.authenticate(request.params.code);
@@ -7,10 +7,10 @@ function facebookAuthController (userModel, facebookProvider) {
       let user = await userModel.findOrCreate({where: { fbid: user_id }});
       response
         .status(200)
-        .send({
+        .json(jwt.sign({
           responseFromFacebookAuthentication,
           user
-        });
+        }, jwtSecretKey));
     } catch (e) {
       response
         .status(400)
