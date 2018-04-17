@@ -17,6 +17,7 @@ const facebookProvider = {
     null,
     {
       url: buildRequestUrl(environment.facebook.baseUrl, environment.facebook.debugTokenEndpoint),
+      appId: environment.facebook.appId,
       appSecret: environment.facebook.appSecret
     }
   ),
@@ -41,8 +42,8 @@ function buildAccessTokenRequest ({url, appId, redirectUri, appSecret}, code) {
  * @param appSecret
  * @param code
  */
-function buildDebugTokenRequest ({url, appSecret}, token) {
-  return `${url}?input_token=${token}&access_token=${appSecret}`;
+function buildDebugTokenRequest ({url, appId, appSecret}, token) {
+  return `${url}?input_token=${token}&access_token=${appId}|${appSecret}`;
 }
 
 /**
