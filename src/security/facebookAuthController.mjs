@@ -1,19 +1,10 @@
-import axios from "axios";
-import facebookProvider from "./facebookProvider";
-
-function facebookAuthController (userModel) {
+function facebookAuthController (userModel, facebookProvider) {
   return async (request, response) => {
     try {
       const responseFromFacebookAuthentication = await facebookProvider.authenticate(request.params.code);
-      const userGraphResponse = await axios
-        .get(
-          facebookProvider
-            .buildDebugTokenRequest(
-              responseFromFacebookAuthentication.access_token
-            )
-        );
-      const fbid = userGraphResponse.data.data.user_id;
-      let user = await userModel.findOrCreate({where: { fbid }});
+
+      const {user_id} = await facebookProvider.getGraphForAccessToken(responseFromFacebookAuthentication.access_token);
+      let user = await userModel.findOrCreate({where: { fbid: user_id }});
       response
         .status(200)
         .send({

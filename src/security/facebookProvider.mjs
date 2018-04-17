@@ -21,7 +21,8 @@ const facebookProvider = {
       appSecret: environment.facebook.appSecret
     }
   ),
-  authenticate: authenticate.bind(null, environment.facebook.appId)
+  authenticate: authenticate.bind(null, environment.facebook.appId),
+  getGraphForAccessToken
 };
 
 /**
@@ -53,6 +54,12 @@ function buildDebugTokenRequest ({url, appId, appSecret}, token) {
  */
 function buildRequestUrl (baseUrl, endpoint) {
   return `${baseUrl}/${endpoint}`;
+}
+
+async function getGraphForAccessToken (accessToken) {
+  const debugTokenResponse = await axios.get(facebookProvider.buildDebugTokenRequest(accessToken));
+
+  return debugTokenResponse.data.data;
 }
 
 async function authenticate (appId, code) {
