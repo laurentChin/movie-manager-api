@@ -1,4 +1,4 @@
-function isValid (movie) {
+function validate (movie) {
   if (!movie.hasOwnProperty('title') || !movie.hasOwnProperty('releaseDate') || !movie.hasOwnProperty('director')) {
     return false;
   }
@@ -11,5 +11,5 @@ function isValid (movie) {
 }
 
 export default {
-  isValid
+  validate
 };
