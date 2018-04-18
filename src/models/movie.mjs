@@ -1,4 +1,4 @@
-import { User } from "./";
+import { User } from './';
 
 function movieModelFactory (sequelize, DataTypes) {
   const Movie = sequelize.define(
