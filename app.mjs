@@ -4,7 +4,7 @@ import jwt from 'express-jwt';
 import environment from './environment';
 
 import { User } from './src/models';
-import { SecurityRouterFactory } from './src/security/router';
+import { SecurityRouterFactory } from './src/security';
 
 const app = express();
 
