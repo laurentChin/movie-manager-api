@@ -3,6 +3,7 @@ function facebookAuthController (userModel, facebookProvider, jwt, jwtSecretKey)
     try {
       const responseFromFacebookAuthentication = await facebookProvider.authenticate(request.params.code);
 
+      // eslint-disable-next-line camelcase
       const {user_id} = await facebookProvider.getGraphForAccessToken(responseFromFacebookAuthentication.access_token);
       let user = await userModel.findOrCreate({where: { fbid: user_id }});
       response
@@ -17,8 +18,8 @@ function facebookAuthController (userModel, facebookProvider, jwt, jwtSecretKey)
         .send({
           message: e.message
         });
-    }
-  }
+    };
+  };
 }
 
 export default facebookAuthController;

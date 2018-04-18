@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 
 import environment from '../../environment';
 import userModelFactory from './user';
-import movieModelFactory from "./movie";
+import movieModelFactory from './movie';
 
 const { database } = { ...environment };
 

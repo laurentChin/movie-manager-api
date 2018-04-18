@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-import facebookAuthController from "./facebookAuthController";
-import facebookProvider from "./facebookProvider";
+import facebookAuthController from './facebookAuthController';
+import facebookProvider from './facebookProvider';
 
 const _routesPrefix = 'security';
 
