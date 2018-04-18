@@ -1,3 +1,5 @@
+import { User } from "./";
+
 function movieModelFactory (sequelize, DataTypes) {
   const Movie = sequelize.define(
     'Movie',
@@ -7,6 +9,7 @@ function movieModelFactory (sequelize, DataTypes) {
       director: DataTypes.STRING
     });
 
+  Movie.belongsTo(User);
   return Movie;
 }
 
