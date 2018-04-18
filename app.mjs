@@ -4,11 +4,11 @@ import jwt from 'express-jwt';
 import environment from './environment';
 
 import { User } from './src/models';
-import { SecurityRouterFactory } from './src/security';
+import { securityRouterFactory } from './src/security';
 
 const app = express();
 
 app
   .use(jwt({secret: environment.jwtSecretKey}).unless({path: /^\/security/}))
-  .use('/security', SecurityRouterFactory(express.Router(), User, environment.jwtSecretKey))
+  .use('/security', securityRouterFactory(express.Router(), User, environment.jwtSecretKey))
   .listen(environment.port, () => {});

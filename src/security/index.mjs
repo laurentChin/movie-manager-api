@@ -1,7 +1,7 @@
-import { SecurityRouterFactory } from './router';
+import securityRouterFactory from './router';
 import facebookProvider from './facebookProvider';
 
 export {
-  SecurityRouterFactory,
+  securityRouterFactory,
   facebookProvider
 };
