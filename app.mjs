@@ -10,5 +10,5 @@ const app = express();
 
 app
   .use(jwt({secret: environment.jwtSecretKey}).unless({path: /^\/security/}))
-  .use(SecurityRouterFactory(express.Router(), User, environment.jwtSecretKey))
+  .use('/security', SecurityRouterFactory(express.Router(), User, environment.jwtSecretKey))
   .listen(environment.port, () => {});
