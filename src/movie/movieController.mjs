@@ -20,6 +20,21 @@ async function createMovie (movieModel, userModel, request, response) {
   }
 }
 
+async function listMovie (movieModel, userModel, request, response) {
+  try {
+    const user = await userModel.findById(request.user.user[0].id);
+    const movies = await movieModel.findAll({where: {UserId: user.get('id')}});
+    response
+      .status(200)
+      .send(movies);
+  } catch (e) {
+    response
+      .status(500)
+      .send({message: 'Your attempt to list your movies failed.'});
+  }
+}
+
 export default {
-  createMovie
+  createMovie,
+  listMovie
 };
