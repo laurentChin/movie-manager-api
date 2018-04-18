@@ -5,7 +5,7 @@ function movieModelFactory (sequelize, DataTypes) {
     'Movie',
     {
       title: DataTypes.STRING,
-      releaseDate: DataTypes.DATE,
+      releaseDate: DataTypes.DATEONLY,
       director: DataTypes.STRING
     });
 
