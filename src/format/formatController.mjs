@@ -19,6 +19,20 @@ async function create (formatModel, request, response) {
   }
 };
 
+async function index (formatModel, request, response) {
+  try {
+    const formats = await formatModel.findAll();
+    response
+      .status(200)
+      .send(formats);
+  } catch (e) {
+    response
+      .status(500)
+      .send({message: 'Your attempt to list all formats failed.'});
+  }
+}
+
 export default {
+  index,
   create
 };
