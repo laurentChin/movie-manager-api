@@ -2,7 +2,7 @@ import validator from './validator';
 
 async function createMovie (movieModel, userModel, request, response) {
   if (!validator.validate(request.body)) {
-    response
+    return response
       .status(400)
       .send({message: 'The movie you are trying to create is not valid'});
   }
