@@ -1,6 +1,9 @@
-import validator from './validator';
+import Sequelize from "sequelize";
 
-async function createMovie (movieModel, userModel, request, response) {
+import validator from './validator';
+import { Format } from '../models';
+
+async function createMovie (movieModel, userModel, formatModel, request, response) {
   if (!validator.validate(request.body)) {
     return response
       .status(400)
@@ -9,7 +12,12 @@ async function createMovie (movieModel, userModel, request, response) {
   try {
     const {title, releaseDate, director} = request.body;
     const user = await userModel.findById(request.user.user[0].id);
-    const movie = await movieModel.findOrCreate({where: {title, releaseDate, director, UserId: user.get('id')}});
+    let [movie] = await movieModel.findOrCreate({where: {title, releaseDate, director, UserId: user.get('id')}});
+    const formats = await formatModel.findAll({where: {id: {[Sequelize.Op.in]: request.body.formats }}});
+    formats.forEach(format => {
+      movie.addFormat(format);
+    });
+    movie = await movie.save();
     response
       .status(200)
       .send(movie);

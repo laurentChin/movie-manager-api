@@ -17,6 +17,6 @@ app
   .use(cors())
   .use(jwt({secret: environment.jwtSecretKey}).unless({path: /^\/security/}))
   .use('/security', securityRouterFactory(express.Router(), User, environment.jwtSecretKey))
-  .use('/movies', movieRouterFactory(express.Router(), Movie, User))
+  .use('/movies', movieRouterFactory(express.Router(), Movie, User, Format))
   .use('/formats', formatRouterFactory(express.Router(), Format))
   .listen(environment.port, () => {});
