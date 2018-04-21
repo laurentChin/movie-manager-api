@@ -31,7 +31,12 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
 async function listMovie (movieModel, userModel, request, response) {
   try {
     const user = await userModel.findById(request.user.user[0].id);
-    const movies = await movieModel.findAll({where: {UserId: user.get('id')}});
+    const movies = await movieModel.findAll({
+      where: {UserId: user.get('id')},
+      include: [{
+        model: Format
+      }]
+    });
     response
       .status(200)
       .send(movies);
