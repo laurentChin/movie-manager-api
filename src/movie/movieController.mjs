@@ -11,7 +11,7 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
   }
   try {
     const {title, releaseDate, director} = request.body;
-    const user = await userModel.findById(request.user.user[0].id);
+    const user = await userModel.findById(request.user.id);
     let [movie] = await movieModel.findOrCreate({where: {title, releaseDate, director, UserId: user.get('id')}});
     const formats = await formatModel.findAll({where: {id: {[Sequelize.Op.in]: request.body.formats }}});
     formats.forEach(format => {
@@ -30,7 +30,7 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
 
 async function listMovie (movieModel, userModel, request, response) {
   try {
-    const user = await userModel.findById(request.user.user[0].id);
+    const user = await userModel.findById(request.user.id);
     const movies = await movieModel.findAll({
       where: {UserId: user.get('id')},
       include: [{

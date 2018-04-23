@@ -5,12 +5,12 @@ function facebookAuthController (userModel, facebookProvider, jwt, jwtSecretKey)
 
       // eslint-disable-next-line camelcase
       const {user_id} = await facebookProvider.getGraphForAccessToken(responseFromFacebookAuthentication.access_token);
-      let user = await userModel.findOrCreate({where: { fbid: user_id }});
+      let [User] = await userModel.findOrCreate({where: { fbid: user_id }});
       response
         .status(200)
         .json(jwt.sign({
-          responseFromFacebookAuthentication,
-          user
+            ...User.get(),
+            ...responseFromFacebookAuthentication
         }, jwtSecretKey));
     } catch (e) {
       response
