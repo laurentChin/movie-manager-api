@@ -48,7 +48,30 @@ async function listMovie (movieModel, userModel, request, response) {
   }
 }
 
+async function getMovie(movieModel, request, response) {
+  try {
+    const movie = await movieModel.findById(request.params.id, {include: [{model: Format, as: 'formats'}]});
+
+    // makes sure the authenticated user own the movie
+    if(request.user.id !== movie.get('UserId')) {
+      return response
+        .status(403)
+        .send({message: `You are not allowed to see this content`});
+    }
+
+    response
+      .status(200)
+      .send(movie);
+
+  } catch (e) {
+    response
+      .status(500)
+      .send({message: 'Your attempt to list your movies failed.'});
+  }
+}
+
 export default {
   createMovie,
-  listMovie
+  listMovie,
+  getMovie
 };
