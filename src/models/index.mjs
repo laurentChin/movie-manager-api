@@ -12,7 +12,7 @@ const User = userModelFactory(sequelize, Sequelize.DataTypes);
 const Format = formatModelFactory(sequelize, Sequelize.DataTypes);
 const Movie = movieModelFactory(sequelize, Sequelize.DataTypes);
 
-Movie.belongsToMany(Format, {through: 'movies_formats'});
+Movie.belongsToMany(Format, {through: 'movies_formats', as: 'formats'});
 Format.belongsToMany(Movie, {through: 'movies_formats'});
 
 export {

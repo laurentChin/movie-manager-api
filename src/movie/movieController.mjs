@@ -34,7 +34,8 @@ async function listMovie (movieModel, userModel, request, response) {
     const movies = await movieModel.findAll({
       where: {UserId: user.get('id')},
       include: [{
-        model: Format
+        model: Format,
+        as: 'formats'
       }]
     });
     response
