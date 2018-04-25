@@ -10,11 +10,11 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
       .send({message: 'The movie you are trying to create is not valid'});
   }
   try {
-    const {title, releaseDate, director} = request.body;
+    const {title, releaseDate, director, formats} = request.body;
     const user = await userModel.findById(request.user.id);
     let [movie] = await movieModel.findOrCreate({where: {title, releaseDate, director, UserId: user.get('id')}});
-    const formats = await formatModel.findAll({where: {id: {[Sequelize.Op.in]: request.body.formats }}});
-    formats.forEach(format => {
+    const formatInstances = await getFormatInstanceFromRequest(formatModel, formats);
+    formatInstances.forEach(format => {
       movie.addFormat(format);
     });
     movie = await movie.save();
@@ -68,6 +68,15 @@ async function getMovie(movieModel, request, response) {
       .status(500)
       .send({message: 'Your attempt to list your movies failed.'});
   }
+}
+
+async function getFormatInstanceFromRequest(formatModel, formats) {
+  const formatIDs = formats.map(format => {
+    return format.id;
+  });
+  const formatQueryResponse = await formatModel.findAll({where: {id: {[Sequelize.Op.in]: formatIDs }}});
+
+  return formatQueryResponse;
 }
 
 export default {
