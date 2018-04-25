@@ -9,8 +9,8 @@ function facebookAuthController (userModel, facebookProvider, jwt, jwtSecretKey)
       response
         .status(200)
         .json(jwt.sign({
-            ...User.get(),
-            ...responseFromFacebookAuthentication
+          ...User.get(),
+          ...responseFromFacebookAuthentication
         }, jwtSecretKey));
     } catch (e) {
       response
