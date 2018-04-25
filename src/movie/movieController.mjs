@@ -1,7 +1,7 @@
 import Sequelize from "sequelize";
 
 import validator from './validator';
-import { Format } from '../models';
+import { movieSelectOptions } from '../models';
 
 async function createMovie (movieModel, userModel, formatModel, request, response) {
   if (!validator.validate(request.body)) {
@@ -20,7 +20,7 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
     movie = await movie.save();
     response
       .status(200)
-      .send(movie);
+      .send(await movieModel.findById(movie.get('id'), movieSelectOptions));
   } catch (e) {
     response
       .status(400)
@@ -33,10 +33,7 @@ async function listMovie (movieModel, userModel, request, response) {
     const user = await userModel.findById(request.user.id);
     const movies = await movieModel.findAll({
       where: {UserId: user.get('id')},
-      include: [{
-        model: Format,
-        as: 'formats'
-      }]
+      ...movieSelectOptions
     });
     response
       .status(200)
@@ -50,7 +47,7 @@ async function listMovie (movieModel, userModel, request, response) {
 
 async function getMovie(movieModel, request, response) {
   try {
-    const movie = await movieModel.findById(request.params.id, {include: [{model: Format, as: 'formats'}]});
+    const movie = await movieModel.findById(request.params.id, movieSelectOptions);
 
     // makes sure the authenticated user own the movie
     if(request.user.id !== movie.get('UserId')) {

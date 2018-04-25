@@ -15,9 +15,23 @@ const Movie = movieModelFactory(sequelize, Sequelize.DataTypes);
 Movie.belongsToMany(Format, {through: 'movies_formats', as: 'formats'});
 Format.belongsToMany(Movie, {through: 'movies_formats'});
 
+const movieSelectOptions = {
+  attributes: ['id', 'title', 'director', 'releaseDate', 'UserId'],
+  include: [
+    {
+      model: Format,
+      as: 'formats',
+      attributes: ['id', 'name'],
+      through: {
+        attributes: []
+      }
+    }]
+};
+
 export {
   User,
   Movie,
+  movieSelectOptions,
   Format
 };
 
