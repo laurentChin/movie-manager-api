@@ -26,7 +26,7 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
     });
     movie = await movie.save();
     response
-      .status(200)
+      .status(201)
       .send(await movieModel.findById(movie.get('id'), movieSelectOptions));
   } catch (e) {
     response
