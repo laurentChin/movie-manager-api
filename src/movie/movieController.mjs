@@ -35,6 +35,61 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
   }
 }
 
+async function updateMovie (movieModel, formatModel, request, response) {
+  const { id } = request.params;
+  const {title, releaseDate, director, formats} = request.body;
+
+  try {
+    const movie = await movieModel.findById(
+      id,
+      movieSelectOptions);
+    // makes sure the authenticated user own the movie
+    if (request.user.id !== movie.get('UserId')) {
+      return response
+        .status(403)
+        .send({message: `You are not allowed to update this content`});
+    }
+
+    const formatInstances = await getFormatInstanceFromRequest(formatModel, formats);
+
+    // use an array of IDs to ease the search
+    const movieInstanceFormatIDs = movie.get('formats').map(format => {
+      return format.id;
+    });
+    // iterate over request formats to add the missing ones
+    formatInstances.forEach(format => {
+      if (!movieInstanceFormatIDs.includes(format.id)) {
+        movie.addFormat(format);
+      }
+    });
+
+    // iterate over movie formats to remove formats if needed
+    const requestFormatIDs = formats.map(format => {
+      return format.id;
+    });
+
+    movie.get('formats').forEach(format => {
+      if (!requestFormatIDs.includes(format.id)) {
+        movie.removeFormat(format);
+      }
+    });
+
+    await movie.update({
+      title,
+      releaseDate,
+      director
+    });
+
+    return response
+      .status(200)
+      .send(await movieModel.findById(movie.get('id'), movieSelectOptions));
+  } catch (e) {
+    return response
+      .status(500)
+      .send({message: `Your attempt to update '${title}' from (${director}) failed.`});
+  }
+}
+
 async function listMovie (movieModel, userModel, request, response) {
   try {
     const user = await userModel.findById(request.user.id);
@@ -85,5 +140,6 @@ async function getFormatInstanceFromRequest (formatModel, formats) {
 export default {
   createMovie,
   listMovie,
-  getMovie
+  getMovie,
+  updateMovie
 };
