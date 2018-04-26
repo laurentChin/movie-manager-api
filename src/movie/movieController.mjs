@@ -132,6 +132,14 @@ async function deleteMovie (movieModel, request, response) {
   const {id} = request.params;
   try {
     const movie = await movieModel.findById(id);
+
+    // makes sure the authenticated user own the movie
+    if (request.user.id !== movie.get('UserId')) {
+      return response
+        .status(403)
+        .send({message: `You are not allowed to delete this movie`});
+    }
+
     const destroyResult = await movie.destroy();
     response
       .status(204)
