@@ -18,8 +18,8 @@
   "scripts": {
     "debug": "node debug --experimental-modules app.mjs",
     "prestart": "npm test",
-    "start": "NODE_ENV=${NODE_ENV:=production} nodemon --inspect --experimental-modules app.mjs",
-    "pretest": "eslint app.mjs src/**/*.mjs; exit 0",
+    "start": "NODE_ENV=${NODE_ENV:=production} nodemon --inspect --experimental-modules public/index.mjs",
+    "pretest": "eslint src/app.mjs src/**/*.mjs; exit 0",
     "test": "NODE_ENV=test ava; exit 0",
     "test:watch": "NODE_ENV=test ava --watch",
     "db:sync": "node --experimental-modules scripts/db-sync.mjs"
