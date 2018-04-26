@@ -128,6 +128,21 @@ async function getMovie (movieModel, request, response) {
   }
 }
 
+async function deleteMovie (movieModel, request, response) {
+  try {
+    const {id} = request.params;
+    const movie = await movieModel.findById(id);
+    const destroyResult = await movie.destroy();
+    response
+      .status(204)
+      .send(destroyResult);
+  } catch (e) {
+    response
+      .status(500)
+      .send({message: `Your attempt to delete '${movie.get('title')}' from (${movie.get('director')}) failed.`});
+  }
+}
+
 async function getFormatInstanceFromRequest (formatModel, formats) {
   const formatIDs = formats.map(format => {
     return format.id;
@@ -141,5 +156,6 @@ export default {
   createMovie,
   listMovie,
   getMovie,
-  updateMovie
+  updateMovie,
+  deleteMovie
 };
