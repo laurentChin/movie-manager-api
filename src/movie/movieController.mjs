@@ -129,8 +129,8 @@ async function getMovie (movieModel, request, response) {
 }
 
 async function deleteMovie (movieModel, request, response) {
+  const {id} = request.params;
   try {
-    const {id} = request.params;
     const movie = await movieModel.findById(id);
     const destroyResult = await movie.destroy();
     response
@@ -139,7 +139,7 @@ async function deleteMovie (movieModel, request, response) {
   } catch (e) {
     response
       .status(500)
-      .send({message: `Your attempt to delete '${movie.get('title')}' from (${movie.get('director')}) failed.`});
+      .send({message: `Your attempt to delete '${id}' failed.`});
   }
 }
 
