@@ -1,26 +1,42 @@
+import fs from 'fs';
+import path from 'path';
+import util from 'util';
+
 import Sequelize from 'sequelize';
+import uuid from 'uuid';
 
 import validator from './validator';
 import { movieSelectOptions } from '../models';
 
 async function createMovie (movieModel, userModel, formatModel, request, response) {
-  if (!validator.validate(request.body)) {
+  const {body, file} = request;
+
+  // multer doesn't inject a complete JS Object, some prototype functions are missing
+  if (!validator.validate(Object.setPrototypeOf(body, {}))) {
     return response
       .status(400)
       .send({message: 'The movie you are trying to create is not valid'});
   }
+
   try {
-    const {title, releaseDate, director, formats} = request.body;
+    const {title, releaseDate, director, formats} = body;
+
+    let poster = null;
+    if(file) {
+      poster = await handleFile(file, uuid, fs);
+    }
+
     const user = await userModel.findById(request.user.id);
     let [movie] = await movieModel.findOrCreate({
       where: {
         title,
         releaseDate,
         director,
-        UserId: user.get('id')
+        UserId: user.get('id'),
+        poster
       }
     });
-    const formatInstances = await getFormatInstanceFromRequest(formatModel, formats);
+    const formatInstances = await getFormatInstanceFromRequest(formatModel, JSON.parse(formats));
     formatInstances.forEach(format => {
       movie.addFormat(format);
     });
@@ -36,8 +52,9 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
 }
 
 async function updateMovie (movieModel, formatModel, request, response) {
-  const { id } = request.params;
-  const {title, releaseDate, director, formats} = request.body;
+  const { body, file, params } = request;
+  const { id } = params;
+  const { title, releaseDate, director, formats} = body;
 
   try {
     const movie = await movieModel.findById(
@@ -50,7 +67,7 @@ async function updateMovie (movieModel, formatModel, request, response) {
         .send({message: `You are not allowed to update this content`});
     }
 
-    const formatInstances = await getFormatInstanceFromRequest(formatModel, formats);
+    const formatInstances = await getFormatInstanceFromRequest(formatModel, JSON.parse(formats));
 
     // use an array of IDs to ease the search
     const movieInstanceFormatIDs = movie.get('formats').map(format => {
@@ -64,7 +81,7 @@ async function updateMovie (movieModel, formatModel, request, response) {
     });
 
     // iterate over movie formats to remove formats if needed
-    const requestFormatIDs = formats.map(format => {
+    const requestFormatIDs = JSON.parse(formats).map(format => {
       return format.id;
     });
 
@@ -74,11 +91,30 @@ async function updateMovie (movieModel, formatModel, request, response) {
       }
     });
 
-    await movie.update({
+    let updatePayload = {
       title,
       releaseDate,
-      director
-    });
+      director,
+    }
+
+    if (file) {
+      if(movie.get('poster')) {
+        await util.promisify(fs.unlink)(
+          movie.get(
+            path.join(
+              process.env.PWD,
+              'public/uploads',
+              movie.get('poster')
+            )
+          )
+        );
+      }
+
+      const poster = await handleFile(file, uuid, fs);
+      updatePayload.poster = poster;
+    }
+
+    await movie.update(updatePayload);
 
     return response
       .status(200)
@@ -140,6 +176,10 @@ async function deleteMovie (movieModel, request, response) {
         .send({message: `You are not allowed to delete this movie`});
     }
 
+    if (movie.get('poster')) {
+      await util.promisify(fs.unlink)(path.join(process.env.PWD, 'public/uploads', movie.get('poster')));
+    }
+
     const destroyResult = await movie.destroy();
     response
       .status(204)
@@ -158,6 +198,35 @@ async function getFormatInstanceFromRequest (formatModel, formats) {
   const formatQueryResponse = await formatModel.findAll({where: {id: {[Sequelize.Op.in]: formatIDs}}});
 
   return formatQueryResponse;
+}
+
+async function handleFile(file, uuid, fs) {
+  const { originalname, path: source } = file;
+  const [extension] = /(.[a-z]{2,})$/.exec(originalname);
+  const filename = `${uuid.v4()}${extension}`;
+  const root = filename.slice(0, 2);
+  const sub = filename.slice(2, 4);
+  const uploadDir = path.join(process.env.PWD, 'public', 'uploads');
+  const access = util.promisify(fs.access);
+  const mkdir = util.promisify(fs.mkdir);
+
+  try {
+    await access(path.join(uploadDir, root));
+  } catch (e) {
+    await mkdir(path.join(uploadDir, root));
+  }
+
+  try {
+    await access(path.join(uploadDir, root, sub));
+  } catch (e) {
+    await mkdir(path.join(uploadDir, root, sub));
+  }
+
+  const readStream = fs.createReadStream(source);
+  const writeStream = fs.createWriteStream(path.join(uploadDir, root, sub, filename));
+  readStream.pipe(writeStream);
+
+  return path.join(root, sub, filename);
 }
 
 export default {

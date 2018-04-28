@@ -13,12 +13,13 @@ import { formatRouterFactory } from './format/index';
 const app = express();
 
 app
-  .use(bodyParser.json())
+  .use(bodyParser.json({limit: '8mb'}))
   .use(cors())
-  .use(jwt({secret: environment.jwtSecretKey}).unless({path: /^\/security/}))
+  .use(jwt({secret: environment.jwtSecretKey}).unless({path: [/^\/security/, /^\/uploads/]}))
   .use('/security', securityRouterFactory(express.Router(), User, environment.jwtSecretKey))
   .use('/movies', movieRouterFactory(express.Router(), Movie, User, Format))
   .use('/formats', formatRouterFactory(express.Router(), Format))
+  .use(express.static('public'))
   .listen(environment.port, () => {});
 
 export default app;

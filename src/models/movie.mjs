@@ -6,7 +6,8 @@ function movieModelFactory (sequelize, DataTypes) {
     {
       title: DataTypes.STRING,
       releaseDate: DataTypes.DATEONLY,
-      director: DataTypes.STRING
+      director: DataTypes.STRING,
+      poster: DataTypes.STRING
     });
 
   Movie.belongsTo(User);

@@ -16,7 +16,7 @@ Movie.belongsToMany(Format, {through: 'movies_formats', as: 'formats', onDelete:
 Format.belongsToMany(Movie, {through: 'movies_formats'});
 
 const movieSelectOptions = {
-  attributes: ['id', 'title', 'director', 'releaseDate', 'UserId'],
+  attributes: ['id', 'title', 'director', 'releaseDate', 'poster', 'UserId'],
   include: [
     {
       model: Format,
