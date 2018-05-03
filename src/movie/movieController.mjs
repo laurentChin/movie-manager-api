@@ -36,7 +36,8 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
         poster
       }
     });
-    const formatInstances = await getFormatInstanceFromRequest(formatModel, JSON.parse(formats));
+
+    const formatInstances = formats ? await getFormatInstanceFromRequest(formatModel, JSON.parse(formats)) : [];
     formatInstances.forEach(format => {
       movie.addFormat(format);
     });

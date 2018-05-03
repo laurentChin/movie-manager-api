@@ -22,16 +22,4 @@ test('movie validator must validate a movie', t => {
     director: "Gus Van Sant"
   }
   t.falsy(movieValidator.default.validate(movieWithMissingTitle));
-
-  const movieWithMissingReleaseDate = {
-    title: "Good Will Hunting",
-    director: "Gus Van Sant"
-  }
-  t.falsy(movieValidator.default.validate(movieWithMissingReleaseDate));
-
-  const movieWithMissingDirector = {
-    title: "Good Will Hunting",
-    releaseDate: "1997-12-05",
-  }
-  t.falsy(movieValidator.default.validate(movieWithMissingDirector));
 });
