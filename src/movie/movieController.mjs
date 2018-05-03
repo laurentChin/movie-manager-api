@@ -131,6 +131,9 @@ async function listMovie (movieModel, userModel, request, response) {
     const user = await userModel.findById(request.user.id);
     const movies = await movieModel.findAll({
       where: {UserId: user.get('id')},
+      order: [
+        ['title', 'ASC']
+      ],
       ...movieSelectOptions
     });
     response
