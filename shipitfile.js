@@ -36,11 +36,13 @@ module.exports = shipit => {
   });
 
   shipit.blTask('pm2-start-or-restart', async () => {
+    const startCmd = `cd ${shipit.releasePath} && pm2 start public/index.mjs --name movie-manager-api --node-args="--experimental-modules"`;
     try {
-      await shipit.remote(`cd ${shipit.releasePath} && pm2 restart movie-manager-api`);
+      await shipit.remote(`cd ${shipit.releasePath} && pm2 delete movie-manager-api`);
+      await shipit.remote(startCmd);
     } catch (e) {
       if(e.stderr.indexOf('[PM2][ERROR] Process movie-manager-api not found') === 0) {
-        await shipit.remote(`cd ${shipit.releasePath} && pm2 start public/index.mjs --name movie-manager-api --node-args="--experimental-modules"`);
+        await shipit.remote(startCmd);
       } else {
         throw e;
       }
