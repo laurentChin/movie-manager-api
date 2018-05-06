@@ -22,7 +22,7 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
     const {title, releaseDate, director, formats} = body;
 
     let poster = null;
-    if(file) {
+    if (file) {
       poster = await handleFile(file, uuid, fs);
     }
 
@@ -55,7 +55,7 @@ async function createMovie (movieModel, userModel, formatModel, request, respons
 async function updateMovie (movieModel, formatModel, request, response) {
   const { body, file, params } = request;
   const { id } = params;
-  const { title, releaseDate, director, formats} = body;
+  const { title, releaseDate, director, formats } = body;
 
   try {
     const movie = await movieModel.findById(
@@ -95,11 +95,11 @@ async function updateMovie (movieModel, formatModel, request, response) {
     let updatePayload = {
       title,
       releaseDate,
-      director,
-    }
+      director
+    };
 
     if (file) {
-      if(movie.get('poster')) {
+      if (movie.get('poster')) {
         await util.promisify(fs.unlink)(
           movie.get(
             path.join(
@@ -204,7 +204,7 @@ async function getFormatInstanceFromRequest (formatModel, formats) {
   return formatQueryResponse;
 }
 
-async function handleFile(file, uuid, fs) {
+async function handleFile (file, uuid, fs) {
   const { originalname, path: source } = file;
   const [extension] = /(.[a-z]{2,})$/.exec(originalname);
   const filename = `${uuid.v4()}${extension}`;
