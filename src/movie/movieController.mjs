@@ -195,6 +195,42 @@ async function deleteMovie (movieModel, request, response) {
   }
 }
 
+async function buklImport (movieModel, userModel, formatModel, request, response) {
+  const { file } = request;
+
+  if (!file) {
+    return response
+      .status(400)
+      .send({message: 'You must provie a csv to this API call'});
+  }
+
+  try {
+    const user = await userModel.findById(request.user.id);
+
+    const csvSourceStream = fs.createReadStream(file.path, {encoding: 'utf8'});
+    let movies = [];
+    csvSourceStream.on('data', chunk => {
+      const rows = chunk.split('\r\n');
+      movies = movies.concat(rows.map(movie => {
+        return movie.split(',');
+      }));
+    });
+
+    csvSourceStream.on('end', () => {
+      createMovies(movies, movieModel, formatModel, user)
+        .then(() => {
+          response
+            .status(201)
+            .send();
+        });
+    });
+  } catch (e) {
+    return response
+      .status(500)
+      .send({});
+  }
+}
+
 async function getFormatInstanceFromRequest (formatModel, formats) {
   const formatIDs = formats.map(format => {
     return format.id;
@@ -233,10 +269,49 @@ async function handleFile (file, uuid, fs) {
   return path.join(root, sub, filename);
 }
 
+async function createMovies (movies, movieModel, formatModel, user) {
+  try {
+    const movieInstances = [];
+    for (const movie of movies) {
+      const [title, releaseDate, director, formats] = movie;
+      if (!title) continue;
+      const movieInstance = await movieModel.create({
+        title,
+        releaseDate: releaseDate ? new Date(releaseDate) : new Date(),
+        director,
+        UserId: user.get('id')
+      });
+
+      if (formats) {
+        const formatInstances = await formatModel.findAll(
+          {
+            where: {
+              id: {
+                [Sequelize.Op.in]: /\//.test(formats) ? formats.split('/').map(format => parseInt(format)) : [parseInt(formats)]
+              }
+            }
+          });
+
+        for (const format of formatInstances) {
+          await movieInstance.addFormat(format);
+        }
+
+        await movieInstance.save();
+      }
+
+      movieInstances.push(movieInstance);
+    }
+    return movieInstances;
+  } catch (e) {
+    throw e;
+  }
+}
+
 export default {
   createMovie,
   listMovie,
   getMovie,
   updateMovie,
-  deleteMovie
+  deleteMovie,
+  buklImport
 };

@@ -10,6 +10,7 @@ function movieRouterFactory (router, movieModel, userModel, formatModel) {
   router.get('/', movieController.listMovie.bind(null, movieModel, userModel));
   router.get(`/:id`, movieController.getMovie.bind(null, movieModel));
   router.delete('/:id', movieController.deleteMovie.bind(null, movieModel));
+  router.post(`/import`, upload.single('csv'), movieController.buklImport.bind(null, movieModel, userModel, formatModel));
 
   return router;
 }
