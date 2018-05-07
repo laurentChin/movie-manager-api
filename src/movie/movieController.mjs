@@ -4,6 +4,7 @@ import util from 'util';
 
 import Sequelize from 'sequelize';
 import uuid from 'uuid';
+import sharp from 'sharp';
 
 import validator from './validator';
 import { movieSelectOptions } from '../models';
@@ -181,7 +182,10 @@ async function deleteMovie (movieModel, request, response) {
     }
 
     if (movie.get('poster')) {
-      await util.promisify(fs.unlink)(path.join(process.env.PWD, 'public/uploads', movie.get('poster')));
+      const promisifiedUnlink = util.promisify(fs.unlink);
+      await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', movie.get('poster')));
+      await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', movie.get('poster').replace(/(.[a-z0-9]{3,4})$/, '-small$1')));
+      await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', movie.get('poster').replace(/(.[a-z0-9]{3,4})$/, '-medium$1')));
     }
 
     const destroyResult = await movie.destroy();
@@ -242,8 +246,9 @@ async function getFormatInstanceFromRequest (formatModel, formats) {
 
 async function handleFile (file, uuid, fs) {
   const { originalname, path: source } = file;
-  const [extension] = /(.[a-z]{2,})$/.exec(originalname);
-  const filename = `${uuid.v4()}${extension}`;
+  const [extension] = /([a-z]{2,})$/.exec(originalname);
+  const name = uuid.v4();
+  const filename = `${name}.${extension}`;
   const root = filename.slice(0, 2);
   const sub = filename.slice(2, 4);
   const uploadDir = path.join(process.env.PWD, 'public', 'uploads');
@@ -263,8 +268,16 @@ async function handleFile (file, uuid, fs) {
   }
 
   const readStream = fs.createReadStream(source);
-  const writeStream = fs.createWriteStream(path.join(uploadDir, root, sub, filename));
-  readStream.pipe(writeStream);
+  const targetDir = path.join(uploadDir, root, sub);
+  const smallScreenWriteStream = fs.createWriteStream(path.join(targetDir, `${name}-small.${extension}`));
+  const mediumScreenWriteStream = fs.createWriteStream(path.join(targetDir, `${name}-medium.${extension}`));
+  const writeStream = fs.createWriteStream(path.join(targetDir, filename));
+  const pipeline = sharp().resize();
+  pipeline.pipe(writeStream)
+  pipeline.clone().resize(50, null).pipe(smallScreenWriteStream);
+  pipeline.clone().resize(150, null).pipe(mediumScreenWriteStream);
+  readStream
+    .pipe(pipeline);
 
   return path.join(root, sub, filename);
 }
