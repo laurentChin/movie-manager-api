@@ -101,15 +101,7 @@ async function updateMovie (movieModel, formatModel, request, response) {
 
     if (file) {
       if (movie.get('poster')) {
-        await util.promisify(fs.unlink)(
-          movie.get(
-            path.join(
-              process.env.PWD,
-              'public/uploads',
-              movie.get('poster')
-            )
-          )
-        );
+        await deletePoster(movie.get('poster'));
       }
 
       const poster = await handleFile(file, uuid, fs);
@@ -182,10 +174,7 @@ async function deleteMovie (movieModel, request, response) {
     }
 
     if (movie.get('poster')) {
-      const promisifiedUnlink = util.promisify(fs.unlink);
-      await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', movie.get('poster')));
-      await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', movie.get('poster').replace(/(.[a-z0-9]{3,4})$/, '-small$1')));
-      await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', movie.get('poster').replace(/(.[a-z0-9]{3,4})$/, '-medium$1')));
+      await deletePoster(movie.get('poster'));
     }
 
     const destroyResult = await movie.destroy();
@@ -318,6 +307,13 @@ async function createMovies (movies, movieModel, formatModel, user) {
   } catch (e) {
     throw e;
   }
+}
+
+async function deletePoster (poster) {
+  const promisifiedUnlink = util.promisify(fs.unlink);
+  await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', poster));
+  await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', poster.replace(/(.[a-z0-9]{3,4})$/, '-small$1')));
+  await promisifiedUnlink(path.join(process.env.PWD, 'public/uploads', poster.replace(/(.[a-z0-9]{3,4})$/, '-medium$1')));
 }
 
 export default {
