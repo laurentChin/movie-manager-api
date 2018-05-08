@@ -262,9 +262,10 @@ async function handleFile (file, uuid, fs) {
   const mediumScreenWriteStream = fs.createWriteStream(path.join(targetDir, `${name}-medium.${extension}`));
   const writeStream = fs.createWriteStream(path.join(targetDir, filename));
   const pipeline = sharp().resize();
-  pipeline.pipe(writeStream)
+  pipeline.pipe(writeStream);
   pipeline.clone().resize(50, null).pipe(smallScreenWriteStream);
   pipeline.clone().resize(150, null).pipe(mediumScreenWriteStream);
+
   readStream
     .pipe(pipeline);
 
