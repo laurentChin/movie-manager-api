@@ -2,6 +2,8 @@ import express from 'express';
 import jwt from 'express-jwt';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
 
 import environment from '../environment';
 
@@ -19,7 +21,16 @@ app
   .use('/security', securityRouterFactory(express.Router(), User, environment.jwtSecretKey))
   .use('/movies', movieRouterFactory(express.Router(), Movie, User, Format))
   .use('/formats', formatRouterFactory(express.Router(), Format))
-  .use(express.static('public'))
+  .use(express.static('public', {fallthrough: false}))
+  .use((err, request, response, next) => {
+    if(/^\/uploads\/([a-z0-9]{2}\/){2}/.test(request.url)) {
+      const posterFallback = fs.createReadStream(path.join(process.env.PWD, 'public', 'assets', 'poster-placeholder.png'));
+      posterFallback
+        .pipe(response);
+    } else {
+      next(err);
+    }
+  })
   .listen(environment.port, () => {});
 
 export default app;
