@@ -17,7 +17,7 @@ import {
 } from '../_fixtures_';
 
 test('facebookProvider default export must be an object', t => {
-  t.is('object', typeof facebookProvider.default);
+  t.is('object', typeof facebookProvider);
 });
 
 test('buildRequestUrl url must build a valid facebook token url', t => {
@@ -29,7 +29,7 @@ test('buildRequestUrl url must build a valid facebook token url', t => {
 });
 
 test('facebookProvider default export must own a buildAccessTokenRequest property', t => {
-  t.truthy(facebookProvider.default.hasOwnProperty('buildAccessTokenRequest'));
+  t.truthy(facebookProvider.hasOwnProperty('buildAccessTokenRequest'));
 });
 
 test('buildAccessTokenRequest must build a valid facebook access token request', t => {
@@ -78,7 +78,7 @@ test.serial('authenticate must throw a FacebookAuthError when the accessToken is
       facebookDebugTokenInvalidFakeResponse
     );
 
-  const error = await t.throws(facebookProvider.default.authenticate('code-parameter'));
+  const error = await t.throws(facebookProvider.authenticate('code-parameter'));
   t.is(error.message, 'invalid token');
   t.is(error.name, 'FacebookAuthError');
 });
@@ -98,12 +98,12 @@ test.serial('authenticate must return a validated facebook accessToken', async t
       facebookDebugTokenValidFakeResponse
     );
 
-  const authenticateResponse = await facebookProvider.default.authenticate('code-parameter');
+  const authenticateResponse = await facebookProvider.authenticate('code-parameter');
   t.truthy(authenticateResponse.hasOwnProperty('access_token'));
   t.truthy(authenticateResponse.hasOwnProperty('token_type'));
   t.truthy(authenticateResponse.hasOwnProperty('expires_in'));
 });
 
 test('facebookProvider default export must own an authenticate property', t => {
-  t.truthy(facebookProvider.default.hasOwnProperty('authenticate'));
+  t.truthy(facebookProvider.hasOwnProperty('authenticate'));
 });
