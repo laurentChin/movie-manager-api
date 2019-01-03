@@ -23,7 +23,7 @@ app
   .use('/formats', formatRouterFactory(express.Router(), Format))
   .use(express.static('public', {fallthrough: false}))
   .use((err, request, response, next) => {
-    if(/^\/uploads/.test(request.url)) {
+    if (/^\/uploads/.test(request.url)) {
       const posterFallback = fs.createReadStream(path.join(process.env.PWD, 'public', 'assets', 'poster-placeholder.png'));
       posterFallback
         .pipe(response);
