@@ -2,6 +2,8 @@ environment.json
 node_modules
 .esm-cache
 
+public/uploads
+
 ################################################
 # Node.js / NPM
 #
