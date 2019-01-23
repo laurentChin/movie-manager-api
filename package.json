@@ -42,7 +42,9 @@
     "extensions": [
       "mjs"
     ],
-    "node-args": [ "--experimental-modules" ]
+    "node-args": [
+      "--experimental-modules"
+    ]
   },
   "main": "app.js",
   "repository": {
