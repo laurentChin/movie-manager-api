@@ -8,7 +8,12 @@ function userModelFactory(sequelize, DataTypes) {
         validate: {
           isEmail: true
         }
-      }
+      },
+      passwordHash: DataTypes.STRING,
+      active: DataTypes.BOOLEAN,
+      token: DataTypes.STRING,
+      tokenExpirationDate: DataTypes.DATE,
+      salt: DataTypes.STRING
     },
     {
       indexes: [

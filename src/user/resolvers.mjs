@@ -1,34 +1,70 @@
 import { Movie } from "../models";
+import { passwordEncoder } from "../security";
+import crypto from "crypto";
+import ase from "apollo-server-express";
 
 const resolvers = {
-  getUser: async (parent, args, { user, model }) => {
-    const { email } = args;
-    if (!user || user.email !== args.email) return null;
+  Query: {
+    getUser: async (parent, args, { user, model }) => {
+      const { email } = args;
+      if (!user || user.email !== args.email) return null;
 
-    const userResult = await model.user.findOne({
-      where: {
-        email
-      },
-      include: [
-        {
-          model: Movie,
-          as: "Movies"
-        }
-      ]
-    });
+      const userResult = await model.user.findOne({
+        where: {
+          email
+        },
+        include: [
+          {
+            model: Movie,
+            as: "Movies"
+          }
+        ]
+      });
 
     const { Movies } = userResult.dataValues;
 
-    return {
-      email,
-      movies: Movies.map(
-        ({ dataValues: { title, director, releaseDate } }) => ({
-          title,
-          director,
-          releaseDate
-        })
-      )
-    };
+      return {
+        email,
+        movies: Movies.map(
+          ({ dataValues: { title, director, releaseDate } }) => ({
+            title,
+            director,
+            releaseDate
+          })
+        )
+      };
+    }
+  },
+  Mutation: {
+    addUser: async (parent, { email, password }, { user, model }) => {
+      if (!email || !password) return null;
+      const existingUser = await model.user.findOne({
+        where: { email }
+      });
+
+      if (existingUser) throw new ase.UserInputError("Cannot create the user");
+
+      const salt = crypto
+        .randomBytes(Math.round(Math.random() * 100))
+        .toString("hex");
+
+      try {
+        await model.user.create({
+          email,
+          salt,
+          passwordHash: passwordEncoder.encode(password, salt),
+          active: false,
+          token: crypto.createHash("sha256").digest("hex"),
+          tokenExpirationDate: new Date()
+        });
+
+        return {
+          email
+        };
+      } catch (e) {
+        throw new ase.ApolloError("An error occured during creation process");
+      }
+    }
   }
 };
 

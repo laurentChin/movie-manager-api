@@ -9,4 +9,7 @@ export default ase.gql`
   type Query {
     getUser(email: String): User
   }
+  type Mutation {
+    addUser(email: String, password: String): User
+  }
 `;

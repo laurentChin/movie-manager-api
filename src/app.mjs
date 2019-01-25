@@ -38,7 +38,7 @@ app
   .use(cors())
   .use(
     jwt({ secret: environment.jwtSecretKey }).unless({
-      path: [/^\/security/, /^\/uploads/]
+      path: [/^\/security/, /^\/uploads/, /^\/graphql/]
     })
   )
   .use(
