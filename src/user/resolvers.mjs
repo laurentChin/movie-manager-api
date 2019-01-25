@@ -7,7 +7,10 @@ const resolvers = {
   Query: {
     getUser: async (parent, args, { user, model }) => {
       const { email } = args;
-      if (!user || user.email !== args.email) return null;
+      if (!user || user.email !== args.email)
+        throw new ase.ForbiddenError(
+          "You are not allowed to process this action."
+        );
 
       const {
         dataValues: { Movies }
