@@ -1,5 +1,6 @@
 {
   "events": {
-    "restart": "npm run test"
+    "restart": "npm run test",
+    "delay": "200"
   }
 }
