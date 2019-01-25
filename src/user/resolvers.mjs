@@ -9,7 +9,9 @@ const resolvers = {
       const { email } = args;
       if (!user || user.email !== args.email) return null;
 
-      const userResult = await model.user.findOne({
+      const {
+        dataValues: { Movies }
+      } = await model.user.findOne({
         where: {
           email
         },
@@ -20,8 +22,6 @@ const resolvers = {
           }
         ]
       });
-
-    const { Movies } = userResult.dataValues;
 
       return {
         email,
