@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
+import ase from "apollo-server-express";
+import jsonwebtoken from "jsonwebtoken";
 
 import environment from "../environment";
 
@@ -12,7 +14,24 @@ import { securityRouterFactory } from "./security/index";
 import { movieRouterFactory } from "./movie/index";
 import { formatRouterFactory } from "./format/index";
 
+import { typeDefs, resolvers } from "./graphql";
+
+const apolloServer = new ase.ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => ({
+    user: req.headers.authorization
+      ? jsonwebtoken.decode(req.headers.authorization.replace("Bearer ", ""))
+      : null,
+    model: {
+      user: User
+    }
+  })
+});
+
 const app = express();
+
+apolloServer.applyMiddleware({ app });
 
 app
   .use(bodyParser.json({ limit: "8mb" }))
@@ -39,6 +58,9 @@ app
       next(err);
     }
   })
-  .listen(environment.port, () => {});
+  .listen(environment.port, () => {
+    console.log(`Server listening on localhost:${environment.port}`);
+    console.log(`GraphQL endpoint : ${apolloServer.graphqlPath}`);
+  });
 
 export default app;

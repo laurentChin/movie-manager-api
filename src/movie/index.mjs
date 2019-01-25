@@ -1,5 +1,4 @@
-import movieRouterFactory from './router';
+import movieRouterFactory from "./router";
+import typeDef from "./typeDef";
 
-export {
-  movieRouterFactory
-};
+export { movieRouterFactory, typeDef };
