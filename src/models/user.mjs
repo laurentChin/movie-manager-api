@@ -1,6 +1,6 @@
-function userModelFactory (sequelize, DataTypes) {
+function userModelFactory(sequelize, DataTypes) {
   const User = sequelize.define(
-    'User',
+    "User",
     {
       fbid: DataTypes.STRING,
       email: {
@@ -14,14 +14,15 @@ function userModelFactory (sequelize, DataTypes) {
       indexes: [
         {
           unique: true,
-          fields: ['email']
+          fields: ["email"]
         },
         {
           unique: true,
-          fields: ['fbid']
+          fields: ["fbid"]
         }
       ]
-    });
+    }
+  );
 
   return User;
 }
