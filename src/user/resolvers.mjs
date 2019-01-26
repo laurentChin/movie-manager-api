@@ -60,7 +60,7 @@ const resolvers = {
           passwordHash: passwordEncoder.encode(password, salt),
           active: false,
           token: crypto.createHash("sha256").digest("hex"),
-          tokenExpirationDate: new Date()
+          tokenExpirationDate: addHours(new Date(), 48)
         });
 
         return {
