@@ -11,8 +11,8 @@ function userModelFactory(sequelize, DataTypes) {
       },
       passwordHash: DataTypes.STRING,
       active: DataTypes.BOOLEAN,
-      token: DataTypes.STRING,
-      tokenExpirationDate: DataTypes.DATE,
+      signInToken: DataTypes.STRING,
+      signInTokenExpirationDate: DataTypes.DATE,
       salt: DataTypes.STRING
     },
     {
