@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import ase from "apollo-server-express";
+import addHours from "date-fns/add_hours";
 
 import { Movie } from "../models";
 import { passwordEncoder } from "../security";

@@ -11,5 +11,6 @@ export default ase.gql`
   }
   type Mutation {
     addUser(email: String, password: String): User
+    validateToken(token: String): User
   }
 `;
