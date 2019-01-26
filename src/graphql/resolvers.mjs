@@ -3,7 +3,8 @@ import { resolvers as securityResolver } from "../security";
 
 export default {
   Query: {
-    ...userResolvers.Query
+    ...userResolvers.Query,
+    ...securityResolver.Query
   },
 
   Mutation: {

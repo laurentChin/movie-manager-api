@@ -13,7 +13,8 @@ function userModelFactory(sequelize, DataTypes) {
       active: DataTypes.BOOLEAN,
       signInToken: DataTypes.STRING,
       signInTokenExpirationDate: DataTypes.DATE,
-      salt: DataTypes.STRING
+      salt: DataTypes.STRING,
+      lastLogin: DataTypes.DATE
     },
     {
       indexes: [

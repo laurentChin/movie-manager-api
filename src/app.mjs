@@ -25,7 +25,8 @@ const apolloServer = new ase.ApolloServer({
       : null,
     model: {
       user: User
-    }
+    },
+    environment
   })
 });
 
