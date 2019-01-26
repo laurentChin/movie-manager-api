@@ -1,7 +1,8 @@
-import { Movie } from "../models";
-import { passwordEncoder } from "../security";
 import crypto from "crypto";
 import ase from "apollo-server-express";
+
+import { Movie } from "../models";
+import { passwordEncoder } from "../security";
 
 const resolvers = {
   Query: {
