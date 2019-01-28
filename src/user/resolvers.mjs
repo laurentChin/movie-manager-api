@@ -73,8 +73,8 @@ const resolvers = {
           salt,
           passwordHash: passwordEncoder.encode(password, salt),
           active: false,
-          token,
-          tokenExpirationDate: addHours(new Date(), 48)
+          signInToken: token,
+          signInTokenExpirationDate: addHours(new Date(), 48)
         });
 
         transporter.sendMail({
