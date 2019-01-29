@@ -23,7 +23,7 @@ Movie.belongsToMany(Format, {
   onDelete: "CASCADE"
 });
 
-Format.belongsToMany(Movie, { through: "movies_formats" });
+Format.belongsToMany(Movie, { through: "movies_formats", as: "movies" });
 
 User.hasMany(Movie, { as: "Movies" });
 

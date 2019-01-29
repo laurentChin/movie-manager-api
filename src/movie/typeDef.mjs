@@ -7,6 +7,7 @@ const typeDef = ase.gql`
     director: String,
     releaseDate: String,
     poster: String,
+    formats: [Format]
   }
 `;
 

@@ -1,7 +1,5 @@
-import formatRouterFactory from './router';
-import validator from './validator';
+import formatRouterFactory from "./router";
+import validator from "./validator";
+import typeDef from "./typeDef";
 
-export {
-  formatRouterFactory,
-  validator
-};
+export { formatRouterFactory, validator, typeDef };

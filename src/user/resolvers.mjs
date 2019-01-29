@@ -2,7 +2,7 @@ import crypto from "crypto";
 import ase from "apollo-server-express";
 import addHours from "date-fns/add_hours";
 
-import { Movie } from "../models";
+import { User, Movie } from "../models";
 import { passwordEncoder } from "../security";
 import { transporter } from "../core/mailer";
 
@@ -15,30 +15,33 @@ const resolvers = {
           "You are not allowed to process this action."
         );
 
-      const {
-        dataValues: { Movies }
-      } = await model.user.findOne({
-        where: {
-          email
-        },
+      return {
+        email
+      };
+    }
+  },
+  User: {
+    async movies(user) {
+      const movies = await Movie.findAll({
         include: [
           {
-            model: Movie,
-            as: "Movies"
+            model: User,
+            as: "User",
+            where: {
+              email: user.email
+            }
           }
         ]
       });
 
-      return {
-        email,
-        movies: Movies.map(
-          ({ dataValues: { title, director, releaseDate } }) => ({
-            title,
-            director,
-            releaseDate
-          })
-        )
-      };
+      return movies.map(
+        ({ dataValues: { id, title, director, releaseDate } }) => ({
+          id,
+          title,
+          director,
+          releaseDate
+        })
+      );
     }
   },
   Mutation: {

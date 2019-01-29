@@ -32,7 +32,10 @@ export default {
         await userInstance.update({ lastLogin: new Date() });
 
         return {
-          jwt: jwt.sign({ email }, environment.jwtSecretKey)
+          jwt: jwt.sign({ email }, environment.jwtSecretKey),
+          user: {
+            email
+          }
         };
       } catch (e) {
         throw new Error("Error during login process");
