@@ -5,6 +5,7 @@ import addHours from "date-fns/add_hours";
 import { User, Movie } from "../models";
 import { passwordEncoder } from "../security";
 import { transporter } from "../core/mailer";
+import { helpers as movieHelpers } from "../movie";
 
 const resolvers = {
   Query: {
@@ -34,14 +35,7 @@ const resolvers = {
         ]
       });
 
-      return movies.map(
-        ({ dataValues: { id, title, director, releaseDate } }) => ({
-          id,
-          title,
-          director,
-          releaseDate
-        })
-      );
+      return movies.map(movieHelpers.mapDataValues);
     }
   },
   Mutation: {

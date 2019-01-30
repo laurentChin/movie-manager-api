@@ -5,7 +5,8 @@ import { resolvers as movieResolver } from "../movie";
 export default {
   Query: {
     ...userResolvers.Query,
-    ...securityResolver.Query
+    ...securityResolver.Query,
+    ...movieResolver.Query
   },
 
   Mutation: {

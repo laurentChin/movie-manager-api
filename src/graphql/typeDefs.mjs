@@ -14,6 +14,7 @@ export default ase.gql`
   type Query {
     getUser(email: String): User
     login(email: String, password: String): LoginResult
+    movies(offset: Int, limit: Int): [Movie]
   }
   type Mutation {
     addUser(email: String, password: String): User
