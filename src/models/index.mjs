@@ -37,6 +37,9 @@ const movieSelectOptions = {
       through: {
         attributes: []
       }
+    },
+    {
+      model: User
     }
   ]
 };

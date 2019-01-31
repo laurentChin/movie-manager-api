@@ -19,5 +19,6 @@ export default ase.gql`
   type Mutation {
     addUser(email: String, password: String): User
     validateToken(token: String): User
+    addMovie(title: String, director: String, releaseDate: String, poster: Upload, formats: [Int]): Movie
   }
 `;

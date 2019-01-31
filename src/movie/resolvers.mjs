@@ -1,5 +1,6 @@
+import ase from "apollo-server-express";
 import { Format, Movie, User } from "../models/index";
-import { mapDataValues } from "./helpers";
+import { handleFile, mapDataValues } from "./helpers";
 import { LIMIT } from "./constants";
 
 const resolvers = {
@@ -20,6 +21,49 @@ const resolvers = {
       });
 
       return movies.map(mapDataValues);
+    }
+  },
+  Mutation: {
+    addMovie: async (
+      parent,
+      { title, director, releaseDate, poster, formats },
+      { user }
+    ) => {
+      if (!user) throw new ase.ForbiddenError("You must be log in to do this.");
+
+      const { filename, createReadStream } = await poster;
+      const posterFile = await handleFile({ filename, createReadStream });
+
+      const movieInstance = await Movie.create(
+        {
+          title,
+          director,
+          releaseDate,
+          poster: posterFile
+        },
+        {
+          include: [
+            {
+              model: Format,
+              as: "formats"
+            },
+            {
+              model: User
+            }
+          ]
+        }
+      );
+
+      const userInstance = await User.findOne({
+        where: {
+          email: user.email
+        }
+      });
+
+      await movieInstance.setUser(userInstance);
+      await movieInstance.addFormats(formats);
+
+      return mapDataValues(movieInstance);
     }
   },
   Movie: {

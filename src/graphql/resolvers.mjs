@@ -11,7 +11,8 @@ export default {
 
   Mutation: {
     ...userResolvers.Mutation,
-    ...securityResolver.Mutation
+    ...securityResolver.Mutation,
+    ...movieResolver.Mutation
   },
 
   User: userResolvers.User,
