@@ -20,32 +20,8 @@ async function updateMovie(movieModel, formatModel, request, response) {
         .send({ message: `You are not allowed to update this content` });
     }
 
-    const formatInstances = await getFormatInstanceFromRequest(
-      formatModel,
-      JSON.parse(formats)
-    );
-
-    // use an array of IDs to ease the search
-    const movieInstanceFormatIDs = movie.get("formats").map(format => {
-      return format.id;
-    });
-    // iterate over request formats to add the missing ones
-    formatInstances.forEach(format => {
-      if (!movieInstanceFormatIDs.includes(format.id)) {
-        movie.addFormat(format);
-      }
-    });
-
-    // iterate over movie formats to remove formats if needed
-    const requestFormatIDs = JSON.parse(formats).map(format => {
-      return format.id;
-    });
-
-    movie.get("formats").forEach(format => {
-      if (!requestFormatIDs.includes(format.id)) {
-        movie.removeFormat(format);
-      }
-    });
+    await movie.setFormats([]);
+    await movie.setFormats(JSON.parse(formats).map(format => format.id));
 
     let updatePayload = {
       title,
