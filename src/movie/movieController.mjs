@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
-import util from 'util';
+import fs from "fs";
+import path from "path";
+import util from "util";
 
-import Sequelize from 'sequelize';
-import uuid from 'uuid';
-import sharp from 'sharp';
+import Sequelize from "sequelize";
+import { movieSelectOptions } from "../models";
+import { mapDataValues } from "./helpers";
 
 import validator from './validator';
 import { movieSelectOptions } from '../models';
@@ -140,24 +140,25 @@ async function listMovie (movieModel, userModel, request, response) {
   }
 }
 
-async function getMovie (movieModel, request, response) {
+async function getMovie(movieModel, request, response) {
   try {
-    const movie = await movieModel.findById(request.params.id, movieSelectOptions);
+    const movie = await movieModel.findById(
+      request.params.id,
+      movieSelectOptions
+    );
 
     // makes sure the authenticated user own the movie
-    if (request.user.id !== movie.get('UserId')) {
+    if (request.user.email !== movie.get("User").get("email")) {
       return response
         .status(403)
-        .send({message: `You are not allowed to see this content`});
+        .send({ message: `You are not allowed to see this content` });
     }
 
-    response
-      .status(200)
-      .send(movie);
+    response.status(200).send(mapDataValues(movie));
   } catch (e) {
     response
       .status(500)
-      .send({message: 'Your attempt to list your movies failed.'});
+      .send({ message: "Your attempt to list your movies failed." });
   }
 }
 
