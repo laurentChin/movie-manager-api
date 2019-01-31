@@ -162,30 +162,34 @@ async function getMovie(movieModel, request, response) {
   }
 }
 
-async function deleteMovie (movieModel, request, response) {
-  const {id} = request.params;
+async function deleteMovie(movieModel, request, response) {
+  const { id } = request.params;
   try {
-    const movie = await movieModel.findById(id);
+    const movie = await movieModel.findById(id, {
+      include: [
+        {
+          model: User
+        }
+      ]
+    });
 
     // makes sure the authenticated user own the movie
-    if (request.user.id !== movie.get('UserId')) {
+    if (request.user.email !== movie.get("User").get("email")) {
       return response
         .status(403)
-        .send({message: `You are not allowed to delete this movie`});
+        .send({ message: `You are not allowed to delete this movie` });
     }
 
-    if (movie.get('poster')) {
-      await deletePoster(movie.get('poster'));
+    if (movie.get("poster")) {
+      await deletePoster(movie.get("poster"));
     }
 
     const destroyResult = await movie.destroy();
-    response
-      .status(204)
-      .send(destroyResult);
+    response.status(204).send(destroyResult);
   } catch (e) {
     response
       .status(500)
-      .send({message: `Your attempt to delete '${id}' failed.`});
+      .send({ message: `Your attempt to delete '${id}' failed.` });
   }
 }
 
