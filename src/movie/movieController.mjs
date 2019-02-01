@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import util from "util";
 
-import Sequelize from "sequelize";
 import { movieSelectOptions, User } from "../models";
 import { handleFile, mapDataValues } from "./helpers";
 
@@ -57,44 +56,6 @@ async function updateMovie(movieModel, formatModel, request, response) {
   }
 }
 
-async function listMovie(movieModel, userModel, request, response) {
-  try {
-    const user = await userModel.findById(request.user.id);
-    const movies = await movieModel.findAll({
-      where: { UserId: user.get("id") },
-      order: [["title", "ASC"]],
-      ...movieSelectOptions
-    });
-    response.status(200).send(movies);
-  } catch (e) {
-    response
-      .status(500)
-      .send({ message: "Your attempt to list your movies failed." });
-  }
-}
-
-async function getMovie(movieModel, request, response) {
-  try {
-    const movie = await movieModel.findById(
-      request.params.id,
-      movieSelectOptions
-    );
-
-    // makes sure the authenticated user own the movie
-    if (request.user.email !== movie.get("User").get("email")) {
-      return response
-        .status(403)
-        .send({ message: `You are not allowed to see this content` });
-    }
-
-    response.status(200).send(mapDataValues(movie));
-  } catch (e) {
-    response
-      .status(500)
-      .send({ message: "Your attempt to list your movies failed." });
-  }
-}
-
 async function deleteMovie(movieModel, request, response) {
   const { id } = request.params;
   try {
@@ -126,17 +87,6 @@ async function deleteMovie(movieModel, request, response) {
   }
 }
 
-async function getFormatInstanceFromRequest(formatModel, formats) {
-  const formatIDs = formats.map(format => {
-    return format.id;
-  });
-  const formatQueryResponse = await formatModel.findAll({
-    where: { id: { [Sequelize.Op.in]: formatIDs } }
-  });
-
-  return formatQueryResponse;
-}
-
 async function deletePoster(poster) {
   const promisifiedUnlink = util.promisify(fs.unlink);
   await promisifiedUnlink(path.join(process.env.PWD, "public/uploads", poster));
@@ -157,8 +107,6 @@ async function deletePoster(poster) {
 }
 
 export default {
-  listMovie,
-  getMovie,
   updateMovie,
   deleteMovie
 };
