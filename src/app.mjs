@@ -9,9 +9,8 @@ import jsonwebtoken from "jsonwebtoken";
 
 import environment from "../environment";
 
-import { User, Movie, Format } from "./models/index";
+import { User, Format } from "./models/index";
 import { securityRouterFactory } from "./security/index";
-import { movieRouterFactory } from "./movie/index";
 import { formatRouterFactory } from "./format/index";
 
 import { typeDefs, resolvers } from "./graphql";
@@ -46,7 +45,6 @@ app
     "/security",
     securityRouterFactory(express.Router(), User, environment.jwtSecretKey)
   )
-  .use("/movies", movieRouterFactory(express.Router(), Movie, User, Format))
   .use("/formats", formatRouterFactory(express.Router(), Format))
   .use(express.static("public", { fallthrough: false }))
   .use((err, request, response, next) => {
