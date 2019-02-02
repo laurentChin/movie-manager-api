@@ -3,7 +3,8 @@ import ase from "apollo-server-express";
 const typeDef = ase.gql`
   type Format {
     id: ID,
-    name: String
+    name: String,
+    logo: String
   }
 `;
 

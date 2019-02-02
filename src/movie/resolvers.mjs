@@ -145,9 +145,10 @@ const resolvers = {
         ]
       });
 
-      return formats.map(({ dataValues: { id, name } }) => ({
+      return formats.map(({ dataValues: { id, name, logo } }) => ({
         id,
-        name
+        name,
+        logo
       }));
     }
   }
