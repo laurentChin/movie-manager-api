@@ -1,9 +1,7 @@
 import fs from "fs";
-import path from "path";
-import util from "util";
 
-import { movieSelectOptions, User } from "../models";
-import { handleFile, mapDataValues } from "./helpers";
+import { movieSelectOptions } from "../models";
+import { deletePoster, handleFile, mapDataValues } from "./helpers";
 
 async function updateMovie(movieModel, formatModel, request, response) {
   const { body, file, params } = request;
@@ -56,57 +54,6 @@ async function updateMovie(movieModel, formatModel, request, response) {
   }
 }
 
-async function deleteMovie(movieModel, request, response) {
-  const { id } = request.params;
-  try {
-    const movie = await movieModel.findById(id, {
-      include: [
-        {
-          model: User
-        }
-      ]
-    });
-
-    // makes sure the authenticated user own the movie
-    if (request.user.email !== movie.get("User").get("email")) {
-      return response
-        .status(403)
-        .send({ message: `You are not allowed to delete this movie` });
-    }
-
-    if (movie.get("poster")) {
-      await deletePoster(movie.get("poster"));
-    }
-
-    const destroyResult = await movie.destroy();
-    response.status(204).send(destroyResult);
-  } catch (e) {
-    response
-      .status(500)
-      .send({ message: `Your attempt to delete '${id}' failed.` });
-  }
-}
-
-async function deletePoster(poster) {
-  const promisifiedUnlink = util.promisify(fs.unlink);
-  await promisifiedUnlink(path.join(process.env.PWD, "public/uploads", poster));
-  await promisifiedUnlink(
-    path.join(
-      process.env.PWD,
-      "public/uploads",
-      poster.replace(/(.[a-z0-9]{3,4})$/, "-small$1")
-    )
-  );
-  await promisifiedUnlink(
-    path.join(
-      process.env.PWD,
-      "public/uploads",
-      poster.replace(/(.[a-z0-9]{3,4})$/, "-medium$1")
-    )
-  );
-}
-
 export default {
-  updateMovie,
-  deleteMovie
+  updateMovie
 };

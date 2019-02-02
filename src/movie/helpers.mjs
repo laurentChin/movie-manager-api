@@ -61,3 +61,22 @@ export async function handleFile({ filename, createReadStream }) {
 
   return path.join(root, sub, finalName);
 }
+
+export async function deletePoster(poster) {
+  const promisifiedUnlink = util.promisify(fs.unlink);
+  await promisifiedUnlink(path.join(process.env.PWD, "public/uploads", poster));
+  await promisifiedUnlink(
+    path.join(
+      process.env.PWD,
+      "public/uploads",
+      poster.replace(/(.[a-z0-9]{3,4})$/, "-small$1")
+    )
+  );
+  await promisifiedUnlink(
+    path.join(
+      process.env.PWD,
+      "public/uploads",
+      poster.replace(/(.[a-z0-9]{3,4})$/, "-medium$1")
+    )
+  );
+}

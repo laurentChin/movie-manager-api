@@ -21,5 +21,6 @@ export default ase.gql`
     validateToken(token: String): User
     addMovie(title: String, director: String, releaseDate: String, poster: Upload, formats: [ID]): Movie
     updateMovie(id: ID, title: String, director: String, releaseDate: String, poster: Upload, formats: [ID]): Movie
+    deleteMovie(id: ID): Movie
   }
 `;

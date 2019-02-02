@@ -1,6 +1,6 @@
 import ase from "apollo-server-express";
 import { Format, Movie, User } from "../models/index";
-import { handleFile, mapDataValues } from "./helpers";
+import { deletePoster, handleFile, mapDataValues } from "./helpers";
 import { LIMIT } from "./constants";
 import { generateNaturalOrder } from "../models/helpers";
 
@@ -102,6 +102,32 @@ const resolvers = {
         return mapDataValues(movieInstance);
       } catch (e) {
         throw new Error(`Update failed for ${id}.`);
+      }
+    },
+    deleteMovie: async (parent, { id }, { user }) => {
+      const movieInstance = await Movie.findById(id, {
+        include: [
+          {
+            model: User
+          }
+        ]
+      });
+
+      if (user.email !== movieInstance.get("User").get("email"))
+        throw new ase.ForbiddenError(
+          "You are not allowed to delete this movie."
+        );
+
+      try {
+        if (movieInstance.get("poster")) {
+          await deletePoster(movieInstance.get("poster"));
+        }
+
+        await movieInstance.destroy();
+
+        return mapDataValues(movieInstance);
+      } catch (e) {
+        throw new Error(`Deletion failed for ${id}.`);
       }
     }
   },

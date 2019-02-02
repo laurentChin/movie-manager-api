@@ -10,7 +10,6 @@ function movieRouterFactory(router, movieModel, userModel, formatModel) {
     upload.single("poster"),
     movieController.updateMovie.bind(null, movieModel, formatModel)
   );
-  router.delete("/:id", movieController.deleteMovie.bind(null, movieModel));
 
   return router;
 }
