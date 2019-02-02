@@ -68,10 +68,23 @@ const resolvers = {
     },
     updateMovie: async (
       parent,
-      { id, title, director, releaseDate, poster, formats }
+      { id, title, director, releaseDate, poster, formats },
+      { user }
     ) => {
+      const movieInstance = await Movie.findById(id, {
+        include: [
+          {
+            model: User
+          }
+        ]
+      });
+
+      if (user.email !== movieInstance.get("User").get("email"))
+        throw new ase.ForbiddenError(
+          "You are not allowed to update this movie."
+        );
+
       try {
-        const movieInstance = await Movie.findById(id);
         await movieInstance.setFormats(formats);
         let values = {
           title,
