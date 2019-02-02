@@ -65,6 +65,31 @@ const resolvers = {
       await movieInstance.addFormats(formats);
 
       return mapDataValues(movieInstance);
+    },
+    updateMovie: async (
+      parent,
+      { id, title, director, releaseDate, poster, formats }
+    ) => {
+      try {
+        const movieInstance = await Movie.findById(id);
+        await movieInstance.setFormats(formats);
+        let values = {
+          title,
+          director,
+          releaseDate
+        };
+
+        if (typeof poster !== "string") {
+          const { filename, createReadStream } = await poster;
+          values.poster = await handleFile({ filename, createReadStream });
+        }
+
+        await movieInstance.update(values);
+
+        return mapDataValues(movieInstance);
+      } catch (e) {
+        throw new Error(`Update failed for ${id}.`);
+      }
     }
   },
   Movie: {
