@@ -6,6 +6,7 @@ import { User, Movie } from "../models";
 import { passwordEncoder } from "../security";
 import { transporter } from "../core/mailer";
 import { helpers as movieHelpers } from "../movie";
+import { generateNaturalOrder } from "../models/helpers";
 
 const resolvers = {
   Query: {
@@ -24,6 +25,7 @@ const resolvers = {
   User: {
     async movies(user) {
       const movies = await Movie.findAll({
+        order: generateNaturalOrder("title"),
         include: [
           {
             model: User,

@@ -2,6 +2,7 @@ import ase from "apollo-server-express";
 import { Format, Movie, User } from "../models/index";
 import { handleFile, mapDataValues } from "./helpers";
 import { LIMIT } from "./constants";
+import { generateNaturalOrder } from "../models/helpers";
 
 const resolvers = {
   Query: {
@@ -9,7 +10,7 @@ const resolvers = {
       const movies = await Movie.findAll({
         offset,
         limit,
-        order: [["title", "ASC"]],
+        order: generateNaturalOrder("title"),
         include: [
           {
             model: User,
