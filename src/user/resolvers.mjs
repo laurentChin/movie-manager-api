@@ -10,15 +10,35 @@ import { generateNaturalOrder } from "../models/helpers";
 
 const resolvers = {
   Query: {
-    getUser: async (parent, args, { user, model }) => {
+    getUser: async (parent, args, { user }) => {
       const { email } = args;
       if (!user || user.email !== args.email)
         throw new ase.ForbiddenError(
           "You are not allowed to process this action."
         );
 
+      const userInstance = await User.findOne({
+        where: {
+          email
+        }
+      });
+
+      const count = await Movie.count({
+        include: [
+          {
+            model: User,
+            as: "User",
+            where: {
+              email
+            }
+          }
+        ]
+      });
+
       return {
-        email
+        email,
+        lastLogin: userInstance.get("lastLogin"),
+        count
       };
     }
   },
