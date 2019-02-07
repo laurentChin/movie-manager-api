@@ -4,12 +4,34 @@ import { deletePoster, handleFile, mapDataValues } from "./helpers";
 import { LIMIT } from "./constants";
 import { generateNaturalOrder } from "../models/helpers";
 
+import Sequelize from "sequelize";
+
 const resolvers = {
   Query: {
     movies: async (parent, { offset, limit = LIMIT }, { user }) => {
       const movies = await Movie.findAll({
         offset,
         limit,
+        order: generateNaturalOrder("title"),
+        include: [
+          {
+            model: User,
+            where: {
+              email: user.email
+            }
+          }
+        ]
+      });
+
+      return movies.map(mapDataValues);
+    },
+    search: async (parent, { terms }, { user }) => {
+      const movies = await Movie.findAll({
+        where: {
+          title: {
+            [Sequelize.Op.iLike]: `%${terms}%`
+          }
+        },
         order: generateNaturalOrder("title"),
         include: [
           {
