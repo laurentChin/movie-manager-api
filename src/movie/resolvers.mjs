@@ -186,7 +186,11 @@ const resolvers = {
           values.poster = await handleFile({ filename, createReadStream });
         }
 
-        if (values.poster && movieInstance.get("poster") !== values.poster) {
+        if (
+          values.poster &&
+          movieInstance.get("poster") &&
+          movieInstance.get("poster") !== values.poster
+        ) {
           await deletePoster(movieInstance.get("poster"));
         }
 

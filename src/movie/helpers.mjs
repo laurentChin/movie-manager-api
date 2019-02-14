@@ -81,9 +81,9 @@ export async function createPipeline(filename) {
 export async function deletePoster(poster) {
   const promisifiedAccess = util.promisify(fs.access);
   const promisifiedUnlink = util.promisify(fs.unlink);
-  const filepath = path.join(process.env.PWD, "public/uploads", poster);
 
   try {
+    const filepath = path.join(process.env.PWD, "public/uploads", poster);
     await promisifiedAccess(filepath, fs.constants.F_OK);
 
     await promisifiedUnlink(
