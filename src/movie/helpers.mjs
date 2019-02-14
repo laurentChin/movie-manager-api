@@ -79,20 +79,29 @@ export async function createPipeline(filename) {
 }
 
 export async function deletePoster(poster) {
+  const promisifiedAccess = util.promisify(fs.access);
   const promisifiedUnlink = util.promisify(fs.unlink);
-  await promisifiedUnlink(path.join(process.env.PWD, "public/uploads", poster));
-  await promisifiedUnlink(
-    path.join(
-      process.env.PWD,
-      "public/uploads",
-      poster.replace(/(.[a-z0-9]{3,4})$/, "-small$1")
-    )
-  );
-  await promisifiedUnlink(
-    path.join(
-      process.env.PWD,
-      "public/uploads",
-      poster.replace(/(.[a-z0-9]{3,4})$/, "-medium$1")
-    )
-  );
+  const filepath = path.join(process.env.PWD, "public/uploads", poster);
+
+  try {
+    await promisifiedAccess(filepath, fs.constants.F_OK);
+
+    await promisifiedUnlink(
+      path.join(process.env.PWD, "public/uploads", poster)
+    );
+    await promisifiedUnlink(
+      path.join(
+        process.env.PWD,
+        "public/uploads",
+        poster.replace(/(.[a-z0-9]{3,4})$/, "-small$1")
+      )
+    );
+    await promisifiedUnlink(
+      path.join(
+        process.env.PWD,
+        "public/uploads",
+        poster.replace(/(.[a-z0-9]{3,4})$/, "-medium$1")
+      )
+    );
+  } catch (e) {}
 }
