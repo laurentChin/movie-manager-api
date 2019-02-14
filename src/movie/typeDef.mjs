@@ -9,6 +9,13 @@ const typeDef = ase.gql`
     poster: String,
     formats: [Format]
   }
+
+  type ExplorationResult {
+    title: String,
+    releaseDate: String,
+    director: String,
+    poster: String
+  }
 `;
 
 export default typeDef;

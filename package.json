@@ -19,6 +19,8 @@
     "nodemailer": "^5.1.1",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
     "sequelize": "^4.38.0",
     "sharp": "^0.20.5",
     "uuid": "^3.3.2"

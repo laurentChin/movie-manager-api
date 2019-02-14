@@ -3,6 +3,7 @@ import util from "util";
 import sharp from "sharp";
 import uuid from "uuid";
 import fs from "fs";
+import request from "request";
 
 export const mapDataValues = ({
   dataValues: { id, title, director, releaseDate, poster, formats }
@@ -15,7 +16,22 @@ export const mapDataValues = ({
   formats
 });
 
+export async function downloadFile(url) {
+  const { filepath, pipeline } = await createPipeline(url);
+  request(url).pipe(pipeline);
+
+  return filepath;
+}
+
 export async function handleFile({ filename, createReadStream }) {
+  const readStream = createReadStream();
+  const { filepath, pipeline } = await createPipeline(filename);
+  readStream.pipe(pipeline);
+
+  return filepath;
+}
+
+export async function createPipeline(filename) {
   const [, extension] = /([a-z]{2,})$/.exec(filename);
   const name = uuid.v4();
   const finalName = `${name}.${extension}`;
@@ -37,7 +53,6 @@ export async function handleFile({ filename, createReadStream }) {
     await mkdir(path.join(uploadDir, root, sub));
   }
 
-  const readStream = createReadStream();
   const targetDir = path.join(uploadDir, root, sub);
   const smallScreenWriteStream = fs.createWriteStream(
     path.join(targetDir, `${name}-small.${extension}`)
@@ -57,9 +72,10 @@ export async function handleFile({ filename, createReadStream }) {
     .resize(150, null)
     .pipe(mediumScreenWriteStream);
 
-  readStream.pipe(pipeline);
-
-  return path.join(root, sub, finalName);
+  return {
+    filepath: path.join(root, sub, finalName),
+    pipeline
+  };
 }
 
 export async function deletePoster(poster) {

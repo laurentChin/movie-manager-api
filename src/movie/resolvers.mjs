@@ -1,7 +1,14 @@
 import ase from "apollo-server-express";
+import rp from "request-promise-native";
+
 import { Format, Movie, User } from "../models/index";
-import { deletePoster, handleFile, mapDataValues } from "./helpers";
-import { LIMIT } from "./constants";
+import {
+  deletePoster,
+  handleFile,
+  downloadFile,
+  mapDataValues
+} from "./helpers";
+import { LIMIT, MOVIE_DB_API_URL } from "./constants";
 import { generateNaturalOrder } from "../models/helpers";
 
 import Sequelize from "sequelize";
@@ -44,6 +51,57 @@ const resolvers = {
       });
 
       return movies.map(mapDataValues);
+    },
+    explore: async (parent, { terms }, { user, model, environment }) => {
+      /* eslint-disable camelcase */
+      const { results } = JSON.parse(
+        await rp(
+          `${MOVIE_DB_API_URL}/search/movie?api_key=${
+            environment.MOVIE_DB_API_KEY
+          }&query=${encodeURIComponent(terms)}&region=FR&language=fr-FR`
+        )
+      );
+
+      const movies = [];
+      const {
+        images: { secure_base_url }
+      } = JSON.parse(
+        await rp(
+          `${MOVIE_DB_API_URL}/configuration?api_key=${
+            environment.MOVIE_DB_API_KEY
+          }`
+        )
+      );
+
+      for (const result of results) {
+        const { id, title, poster_path, release_date: releaseDate } = result;
+        const movie = { title, releaseDate };
+        const { crew } = JSON.parse(
+          await rp(
+            `${MOVIE_DB_API_URL}/movie/${id}/credits?api_key=${
+              environment.MOVIE_DB_API_KEY
+            }`
+          )
+        );
+
+        const directors = crew.filter(member => {
+          return member.job.toLowerCase() === "director";
+        });
+
+        movie.director = directors
+          .reduce((acc, director) => `${acc}, ${director.name}`, "")
+          .replace(", ", "");
+
+        movie.poster = poster_path
+          ? `${secure_base_url}original${poster_path}`
+          : "";
+
+        movies.push(movie);
+      }
+
+      /* eslint-enable camelcase */
+
+      return movies;
     }
   },
   Mutation: {
@@ -54,8 +112,13 @@ const resolvers = {
     ) => {
       if (!user) throw new ase.ForbiddenError("You must be log in to do this.");
 
-      const { filename, createReadStream } = await poster;
-      const posterFile = await handleFile({ filename, createReadStream });
+      let posterFile = "";
+      if (typeof poster === "string") {
+        posterFile = await downloadFile(poster);
+      } else {
+        const { filename, createReadStream } = await poster;
+        posterFile = await handleFile({ filename, createReadStream });
+      }
 
       const movieInstance = await Movie.create(
         {
@@ -113,6 +176,10 @@ const resolvers = {
           director,
           releaseDate
         };
+
+        if (typeof poster === "string" && /^http[s]?:\/\//.test(poster)) {
+          values.poster = await downloadFile(poster);
+        }
 
         if (typeof poster !== "string") {
           const { filename, createReadStream } = await poster;

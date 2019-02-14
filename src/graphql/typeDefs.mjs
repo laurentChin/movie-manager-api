@@ -15,7 +15,8 @@ export default ase.gql`
     getUser(email: String): User
     login(email: String, password: String): LoginResult
     movies(offset: Int, limit: Int): [Movie]
-    search(terms: String): [Movie]
+    search(terms: String): [Movie],
+    explore(terms: String): [ExplorationResult]
   }
   type Mutation {
     addUser(email: String, password: String): User
