@@ -4,7 +4,7 @@ function movieModelFactory (sequelize, DataTypes, User) {
     {
       title: DataTypes.STRING,
       releaseDate: DataTypes.DATEONLY,
-      director: DataTypes.STRING,
+      direction: DataTypes.STRING,
       poster: DataTypes.STRING
     });
 

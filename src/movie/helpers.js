@@ -6,11 +6,11 @@ const fs = require("fs");
 const request = require("request");
 
 const mapDataValues = ({
-  dataValues: { id, title, director, releaseDate, poster, formats }
+  dataValues: { id, title, direction, releaseDate, poster, formats }
 }) => ({
   id,
   title,
-  director,
+  direction,
   releaseDate,
   poster,
   formats

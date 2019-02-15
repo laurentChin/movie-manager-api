@@ -4,7 +4,7 @@ const typeDef = ase.gql`
   type Movie {
     id: ID,
     title: String,
-    director: String,
+    direction: String,
     releaseDate: String,
     poster: String,
     formats: [Format]
@@ -13,7 +13,7 @@ const typeDef = ase.gql`
   type ExplorationResult {
     title: String,
     releaseDate: String,
-    director: String,
+    direction: String,
     poster: String
   }
 `;

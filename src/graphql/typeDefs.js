@@ -21,8 +21,8 @@ const typeDefs = gql`
   type Mutation {
     addUser(email: String, password: String): User
     validateToken(token: String): User
-    addMovie(title: String, director: String, releaseDate: String, poster: Upload, formats: [ID]): Movie
-    updateMovie(id: ID, title: String, director: String, releaseDate: String, poster: Upload, formats: [ID]): Movie
+    addMovie(title: String, direction: String, releaseDate: String, poster: Upload, formats: [ID]): Movie
+    updateMovie(id: ID, title: String, direction: String, releaseDate: String, poster: Upload, formats: [ID]): Movie
     deleteMovie(id: ID): Movie
   }
 `;

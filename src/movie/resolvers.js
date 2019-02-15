@@ -84,11 +84,11 @@ const resolvers = {
           )
         );
 
-        const directors = crew.filter(member => {
+        const direction = crew.filter(member => {
           return member.job.toLowerCase() === "director";
         });
 
-        movie.director = directors
+        movie.direction = direction
           .reduce((acc, director) => `${acc}, ${director.name}`, "")
           .replace(", ", "");
 
@@ -107,7 +107,7 @@ const resolvers = {
   Mutation: {
     addMovie: async (
       parent,
-      { title, director, releaseDate, poster, formats },
+      { title, direction, releaseDate, poster, formats },
       { user }
     ) => {
       if (!user) throw new ase.ForbiddenError("You must be log in to do this.");
@@ -123,7 +123,7 @@ const resolvers = {
       const movieInstance = await Movie.create(
         {
           title,
-          director,
+          direction,
           releaseDate,
           poster: posterFile
         },
@@ -153,7 +153,7 @@ const resolvers = {
     },
     updateMovie: async (
       parent,
-      { id, title, director, releaseDate, poster, formats },
+      { id, title, direction, releaseDate, poster, formats },
       { user }
     ) => {
       const movieInstance = await Movie.findById(id, {
@@ -173,7 +173,7 @@ const resolvers = {
         await movieInstance.setFormats(formats);
         let values = {
           title,
-          director,
+          direction,
           releaseDate
         };
 

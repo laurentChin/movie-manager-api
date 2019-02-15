@@ -28,7 +28,7 @@ Format.belongsToMany(Movie, { through: "movies_formats", as: "movies" });
 User.hasMany(Movie, { as: "Movies" });
 
 const movieSelectOptions = {
-  attributes: ["id", "title", "director", "releaseDate", "poster", "UserId"],
+  attributes: ["id", "title", "direction", "releaseDate", "poster", "UserId"],
   include: [
     {
       model: Format,

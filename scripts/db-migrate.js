@@ -1,10 +1,11 @@
-const sequelize  = require("../src/models");
+const { sequelize }  = require("../src/models");
 
 const [, , file, action] = process.argv;
 
 const processMigration = async (file, action) => {
-  const migration = await require(`../src/migrations/${file}`);
-  await migration.default[action](
+  const migration = require(`../src/migrations/${file}`);
+
+  await migration[action](
     sequelize.queryInterface,
     sequelize.Sequelize
   );
@@ -12,4 +13,7 @@ const processMigration = async (file, action) => {
 
 processMigration(file, action)
   .then(_ => process.exit(0))
-  .catch(_ => process.exit(1));
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  });
