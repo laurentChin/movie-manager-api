@@ -36,7 +36,7 @@ module.exports = shipit => {
   shipit.blTask("pm2-start-or-restart", async () => {
     const startCmd = `cd ${
       shipit.releasePath
-    } && pm2 start public/index.mjs --name movie-manager-api --node-args="--experimental-modules" --interpreter=~/.nvm/versions/node/v11.3.0/bin/node`;
+    } && pm2 start public/index.js --name movie-manager-api`;
     try {
       await shipit.remote(
         `cd ${shipit.releasePath} && pm2 delete movie-manager-api`

@@ -26,33 +26,23 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "debug": "node debug --experimental-modules app.mjs",
+    "debug": "node debug app.js",
     "prestart": "npm test",
-    "start": "NODE_ENV=developpment nodemon --inspect --experimental-modules public/index.mjs",
-    "pretest": "eslint src/app.mjs src/**/*.mjs; exit 0",
+    "start": "NODE_ENV=developpment nodemon --inspect public/index.js",
+    "pretest": "eslint src/app.js src/**/*.js; exit 0",
     "test": "NODE_ENV=test ava; exit 0",
     "test:watch": "NODE_ENV=test ava --watch",
-    "db:sync": "node --experimental-modules scripts/db-sync.mjs",
-    "db:migrate": "node --experimental-modules scripts/db-migrate.mjs",
+    "db:sync": "node scripts/db-sync.js",
+    "db:migrate": "node scripts/db-migrate.js",
     "shipit": "shipit"
   },
   "ava": {
     "files": [
-      "tests/**/*.mjs",
+      "tests/**/*.js",
       "!tests/_fixtures_/*"
     ],
-    "sources": "src/**/*.mjs",
-    "verbose": true,
-    "require": [
-      "esm"
-    ],
-    "babel": false,
-    "extensions": [
-      "mjs"
-    ],
-    "node-args": [
-      "--experimental-modules"
-    ]
+    "sources": "src/**/*.js",
+    "verbose": true
   },
   "main": "app.js",
   "repository": {
