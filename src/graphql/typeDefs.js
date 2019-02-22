@@ -17,6 +17,7 @@ const typeDefs = gql`
     movies(offset: Int, limit: Int): [Movie]
     search(terms: String): [Movie]
     explore(terms: String): [ExplorationResult]
+    getFormats:[Format]
   }
   type Mutation {
     addUser(email: String, password: String): User
