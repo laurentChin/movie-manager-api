@@ -10,6 +10,8 @@ const {
 } = require("./helpers");
 const { LIMIT, MOVIE_DB_API_URL } = require("./constants");
 const { generateNaturalOrder } = require("../models/helpers");
+const { createMovieLog } = require("../log/helpers");
+const { CREATE, UPDATE, DELETE } = require("../log/constants");
 
 const Sequelize = require("sequelize");
 
@@ -149,6 +151,8 @@ const resolvers = {
       await movieInstance.setUser(userInstance);
       await movieInstance.addFormats(formats);
 
+      await createMovieLog(movieInstance, CREATE, formats);
+
       return mapDataValues(movieInstance);
     },
     updateMovie: async (
@@ -158,6 +162,10 @@ const resolvers = {
     ) => {
       const movieInstance = await Movie.findById(id, {
         include: [
+          {
+            model: Format,
+            as: "formats"
+          },
           {
             model: User
           }
@@ -196,6 +204,8 @@ const resolvers = {
 
         await movieInstance.update(values);
 
+        await createMovieLog(movieInstance, UPDATE);
+
         return mapDataValues(movieInstance);
       } catch (e) {
         throw new Error(`Update failed for ${id}.`);
@@ -204,6 +214,10 @@ const resolvers = {
     deleteMovie: async (parent, { id }, { user }) => {
       const movieInstance = await Movie.findById(id, {
         include: [
+          {
+            model: Format,
+            as: "formats"
+          },
           {
             model: User
           }
@@ -221,6 +235,8 @@ const resolvers = {
         }
 
         await movieInstance.destroy();
+
+        await createMovieLog(movieInstance, DELETE);
 
         return mapDataValues(movieInstance);
       } catch (e) {
