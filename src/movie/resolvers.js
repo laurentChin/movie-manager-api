@@ -173,6 +173,10 @@ const resolvers = {
         ]
       });
 
+      if (!movieInstance) {
+        throw new ase.ApolloError("Not found", 404);
+      }
+
       if (user.email !== movieInstance.get("User").get("email"))
         throw new ase.ForbiddenError(
           "You are not allowed to update this movie."
@@ -224,6 +228,10 @@ const resolvers = {
           }
         ]
       });
+
+      if (!movieInstance) {
+        throw new ase.ApolloError("Not found", 404);
+      }
 
       if (user.email !== movieInstance.get("User").get("email"))
         throw new ase.ForbiddenError(
