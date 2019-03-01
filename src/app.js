@@ -9,7 +9,7 @@ const jsonwebtoken = require("jsonwebtoken");
 
 const environment = require("../environment");
 
-const { User, Format }  = require("./models");
+const { User, Format, Log } = require("./models");
 const { formatRouterFactory } = require("./format/index");
 
 const { typeDefs, resolvers } = require("./graphql");
@@ -22,7 +22,9 @@ const apolloServer = new ase.ApolloServer({
       ? jsonwebtoken.decode(req.headers.authorization.replace("Bearer ", ""))
       : null,
     model: {
-      user: User
+      user: User,
+      Log,
+      Format
     },
     environment
   })

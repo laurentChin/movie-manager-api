@@ -4,12 +4,14 @@ const { typeDef: userTypeDef } = require("../user");
 const { typeDef: movieTypeDef } = require("../movie");
 const { typeDef: securityTypeDef } = require("../security");
 const { typeDef: formatTypeDef } = require("../format");
+const { typeDef: logTypeDef } = require("../log");
 
 const typeDefs = gql`
   ${userTypeDef}
   ${movieTypeDef}
   ${securityTypeDef}
   ${formatTypeDef}
+  ${logTypeDef}
 
   type Query {
     getUser(email: String): User
@@ -17,7 +19,8 @@ const typeDefs = gql`
     movies(offset: Int, limit: Int): [Movie]
     search(terms: String): [Movie]
     explore(terms: String): [ExplorationResult]
-    getFormats:[Format]
+    getFormats: [Format]
+    logs(createdAt: String): [Log]
   }
   type Mutation {
     addUser(email: String, password: String): User

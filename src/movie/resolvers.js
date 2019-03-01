@@ -204,7 +204,7 @@ const resolvers = {
 
         await movieInstance.update(values);
 
-        await createMovieLog(movieInstance, UPDATE);
+        await createMovieLog(movieInstance, UPDATE, formats);
 
         return mapDataValues(movieInstance);
       } catch (e) {

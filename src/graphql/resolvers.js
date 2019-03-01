@@ -1,14 +1,16 @@
 const { resolvers: userResolvers } = require("../user");
-const{ resolvers: securityResolver } = require("../security");
-const{ resolvers: movieResolver } = require("../movie");
+const { resolvers: securityResolver } = require("../security");
+const { resolvers: movieResolver } = require("../movie");
 const { resolvers: formatResolver } = require("../format");
+const { resolvers: logResolvers } = require("../log");
 
 module.exports = {
   Query: {
     ...userResolvers.Query,
     ...securityResolver.Query,
     ...movieResolver.Query,
-    ...formatResolver.Query
+    ...formatResolver.Query,
+    ...logResolvers.Query
   },
 
   Mutation: {

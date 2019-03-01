@@ -1,7 +1,17 @@
-const { Log, User } = require("../models");
+const { Log, User, Format } = require("../models");
+const Sequelize = require("sequelize");
 
-const createMovieLog = async (movie, action, formats = null) => {
+const createMovieLog = async (movie, action, formatIDs) => {
   const { id, title, direction, releaseDate, poster } = movie;
+
+  const formats = await Format.findAll({
+    where: {
+      id: {
+        [Sequelize.Op.in]: formatIDs || movie.formats.map(format => format.id)
+      }
+    }
+  });
+
   const logInstance = await Log.create(
     {
       model: "movie",
@@ -12,7 +22,11 @@ const createMovieLog = async (movie, action, formats = null) => {
         direction,
         releaseDate,
         poster,
-        formats: formats || movie.formats.map(format => format.id)
+        formats: formats.map(({ dataValues: { id, name, logo } }) => ({
+          id,
+          name,
+          logo
+        }))
       })
     },
     {
