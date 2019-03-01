@@ -112,7 +112,8 @@ const resolvers = {
       { title, direction, releaseDate, poster, formats },
       { user }
     ) => {
-      if (!user) throw new ase.ForbiddenError("You must be log in to do this.");
+      if (!user)
+        throw new ase.ForbiddenError("You must be logged in to do this.");
 
       let posterFile = "";
       if (typeof poster === "string") {
