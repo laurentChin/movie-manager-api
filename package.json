@@ -10,7 +10,7 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "date-fns": "^1.30.1",
-    "express": "^4.16.3",
+    "express": "^4.16.4",
     "express-jwt": "^5.3.1",
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.3",
@@ -53,7 +53,7 @@
   "license": "MIT",
   "devDependencies": {
     "@std/esm": "^0.11.3",
-    "ava": "^1.0.0-beta.5",
+    "ava": "^1.4.1",
     "axios-mock-adapter": "^1.15.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^3.6.0",
@@ -67,7 +67,7 @@
     "shipit-cli": "^4.1.1",
     "shipit-deploy": "^4.1.1",
     "shipit-shared": "^4.4.2",
-    "tap-spec": "^4.1.2",
+    "tap-spec": "^5.0.0",
     "tape": "^4.9.1"
   }
 }
