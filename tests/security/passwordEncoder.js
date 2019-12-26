@@ -1,4 +1,4 @@
-const { test } = require("ava");
+const test = require("ava");
 const crypto = require("crypto");
 
 const { passwordEncoder } = require("../../src/security");

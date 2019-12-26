@@ -1,10 +1,10 @@
-const { test } = require('ava');
+const test = require("ava");
 
-const { validate } = require('../../src/format/validator');
+const { validate } = require("../../src/format/validator");
 
-test('format validator must validate a movie', t => {
+test("format validator must validate a movie", t => {
   const validFormat = {
-    name: 'bluray'
+    name: "bluray"
   };
   t.truthy(validate(validFormat));
 });
