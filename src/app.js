@@ -47,7 +47,7 @@ app
   .use((err, request, response, next) => {
     if (/^\/uploads/.test(request.url)) {
       const posterFallback = fs.createReadStream(
-        path.join(process.env.PWD, "public", "assets", "poster-placeholder.png")
+        path.join(environment.assetsPath, "assets", "poster-placeholder.png")
       );
       posterFallback.pipe(response);
     } else {

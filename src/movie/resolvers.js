@@ -100,23 +100,27 @@ const resolvers = {
       /* eslint-enable camelcase */
 
       return movies;
-    }
+    },
   },
   Mutation: {
     addMovie: async (
       parent,
       { title, direction, releaseDate, poster, formats },
-      { user }
+      { user, environment }
     ) => {
       if (!user)
         throw new ase.ForbiddenError("You must be logged in to do this.");
 
       let posterFile = "";
       if (typeof poster === "string") {
-        posterFile = await downloadFile(poster);
+        posterFile = await downloadFile(poster, environment.assetsPath);
       } else {
         const { filename, createReadStream } = await poster;
-        posterFile = await handleFile({ filename, createReadStream });
+        posterFile = await handleFile({
+          filename,
+          createReadStream,
+          assetsPath: environment.assetsPath,
+        });
       }
 
       const movieInstance = await Movie.create(
@@ -155,7 +159,7 @@ const resolvers = {
     updateMovie: async (
       parent,
       { id, title, direction, releaseDate, poster, formats },
-      { user }
+      { user, environment }
     ) => {
       const movieInstance = await Movie.findById(id, {
         include: [
@@ -187,12 +191,16 @@ const resolvers = {
         };
 
         if (typeof poster === "string" && /^http[s]?:\/\//.test(poster)) {
-          values.poster = await downloadFile(poster);
+          values.poster = await downloadFile(poster, environment.assetsPath);
         }
 
         if (typeof poster !== "string") {
           const { filename, createReadStream } = await poster;
-          values.poster = await handleFile({ filename, createReadStream });
+          values.poster = await handleFile({
+            filename,
+            createReadStream,
+            assetsPath: environment.assetsPath,
+          });
         }
 
         if (
@@ -200,7 +208,10 @@ const resolvers = {
           movieInstance.get("poster") &&
           movieInstance.get("poster") !== values.poster
         ) {
-          await deletePoster(movieInstance.get("poster"));
+          await deletePoster(
+            movieInstance.get("poster"),
+            environment.assetsPath
+          );
         }
 
         await movieInstance.update(values);
@@ -212,7 +223,7 @@ const resolvers = {
         throw new Error(`Update failed for ${id}.`);
       }
     },
-    deleteMovie: async (parent, { id }, { user }) => {
+    deleteMovie: async (parent, { id }, { user, environment }) => {
       const movieInstance = await Movie.findById(id, {
         include: [
           {
@@ -236,7 +247,10 @@ const resolvers = {
 
       try {
         if (movieInstance.get("poster")) {
-          await deletePoster(movieInstance.get("poster"));
+          await deletePoster(
+            movieInstance.get("poster"),
+            environment.assetsPath
+          );
         }
 
         await movieInstance.destroy();
