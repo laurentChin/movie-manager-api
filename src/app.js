@@ -38,7 +38,7 @@ app
   .use(bodyParser.json({ limit: "8mb" }))
   .use(cors())
   .use(
-    jwt({ secret: environment.jwtSecretKey }).unless({
+    jwt({ secret: environment.jwtSecretKey, algorithms: ["HS256"] }).unless({
       path: [/^\/uploads/, /^\/assets/, /^\/graphql/],
     })
   )
