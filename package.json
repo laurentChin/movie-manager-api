@@ -41,7 +41,6 @@
       "tests/**/*.js",
       "!tests/_fixtures_/*"
     ],
-    "sources": "src/**/*.js",
     "verbose": true
   },
   "prettier": {
