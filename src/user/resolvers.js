@@ -19,8 +19,8 @@ const resolvers = {
 
       const userInstance = await User.findOne({
         where: {
-          email
-        }
+          email,
+        },
       });
 
       const count = await Movie.count({
@@ -29,18 +29,18 @@ const resolvers = {
             model: User,
             as: "User",
             where: {
-              email
-            }
-          }
-        ]
+              email,
+            },
+          },
+        ],
       });
 
       return {
         email,
         lastLogin: userInstance.get("lastLogin"),
-        count
+        count,
       };
-    }
+    },
   },
   User: {
     async movies(user) {
@@ -51,14 +51,14 @@ const resolvers = {
             model: User,
             as: "User",
             where: {
-              email: user.email
-            }
-          }
-        ]
+              email: user.email,
+            },
+          },
+        ],
       });
 
       return movies.map(movieHelpers.mapDataValues);
-    }
+    },
   },
   Mutation: {
     addUser: async (
@@ -69,13 +69,13 @@ const resolvers = {
         model,
         environment: {
           frontUrl,
-          signIn: { sender, subject, validationPath }
-        }
+          signIn: { sender, subject, validationPath },
+        },
       }
     ) => {
       if (!email || !password) return null;
       const existingUser = await model.user.findOne({
-        where: { email }
+        where: { email },
       });
 
       if (existingUser) throw new ase.UserInputError("Cannot create the user");
@@ -93,24 +93,24 @@ const resolvers = {
           passwordHash: passwordEncoder.encode(password, salt),
           active: false,
           signInToken: token,
-          signInTokenExpirationDate: addHours(new Date(), 48)
+          signInTokenExpirationDate: addHours(new Date(), 48),
         });
 
         transporter.sendMail({
           from: sender,
           to: email,
           subject,
-          text: `${frontUrl}/${validationPath}?token=${token}`
+          text: `${frontUrl}/${validationPath}?token=${token}`,
         });
 
         return {
-          email
+          email,
         };
       } catch (e) {
         throw new ase.ApolloError("An error occured during creation process");
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = resolvers;

@@ -6,7 +6,7 @@ const {
   deletePoster,
   handleFile,
   downloadFile,
-  mapDataValues
+  mapDataValues,
 } = require("./helpers");
 const { LIMIT, MOVIE_DB_API_URL } = require("./constants");
 const { generateNaturalOrder } = require("../models/helpers");
@@ -26,10 +26,10 @@ const resolvers = {
           {
             model: User,
             where: {
-              email: user.email
-            }
-          }
-        ]
+              email: user.email,
+            },
+          },
+        ],
       });
 
       return movies.map(mapDataValues);
@@ -38,18 +38,18 @@ const resolvers = {
       const movies = await Movie.findAll({
         where: {
           title: {
-            [Sequelize.Op.iLike]: `%${terms}%`
-          }
+            [Sequelize.Op.iLike]: `%${terms}%`,
+          },
         },
         order: generateNaturalOrder("title"),
         include: [
           {
             model: User,
             where: {
-              email: user.email
-            }
-          }
-        ]
+              email: user.email,
+            },
+          },
+        ],
       });
 
       return movies.map(mapDataValues);
@@ -66,12 +66,10 @@ const resolvers = {
 
       const movies = [];
       const {
-        images: { secure_base_url }
+        images: { secure_base_url },
       } = JSON.parse(
         await rp(
-          `${MOVIE_DB_API_URL}/configuration?api_key=${
-            environment.MOVIE_DB_API_KEY
-          }`
+          `${MOVIE_DB_API_URL}/configuration?api_key=${environment.MOVIE_DB_API_KEY}`
         )
       );
 
@@ -80,9 +78,7 @@ const resolvers = {
         const movie = { title, releaseDate };
         const { crew } = JSON.parse(
           await rp(
-            `${MOVIE_DB_API_URL}/movie/${id}/credits?api_key=${
-              environment.MOVIE_DB_API_KEY
-            }`
+            `${MOVIE_DB_API_URL}/movie/${id}/credits?api_key=${environment.MOVIE_DB_API_KEY}`
           )
         );
 
@@ -128,25 +124,25 @@ const resolvers = {
           title,
           direction,
           releaseDate,
-          poster: posterFile
+          poster: posterFile,
         },
         {
           include: [
             {
               model: Format,
-              as: "formats"
+              as: "formats",
             },
             {
-              model: User
-            }
-          ]
+              model: User,
+            },
+          ],
         }
       );
 
       const userInstance = await User.findOne({
         where: {
-          email: user.email
-        }
+          email: user.email,
+        },
       });
 
       await movieInstance.setUser(userInstance);
@@ -165,12 +161,12 @@ const resolvers = {
         include: [
           {
             model: Format,
-            as: "formats"
+            as: "formats",
           },
           {
-            model: User
-          }
-        ]
+            model: User,
+          },
+        ],
       });
 
       if (!movieInstance) {
@@ -184,10 +180,10 @@ const resolvers = {
 
       try {
         await movieInstance.setFormats(formats);
-        let values = {
+        const values = {
           title,
           direction,
-          releaseDate
+          releaseDate,
         };
 
         if (typeof poster === "string" && /^http[s]?:\/\//.test(poster)) {
@@ -221,12 +217,12 @@ const resolvers = {
         include: [
           {
             model: Format,
-            as: "formats"
+            as: "formats",
           },
           {
-            model: User
-          }
-        ]
+            model: User,
+          },
+        ],
       });
 
       if (!movieInstance) {
@@ -251,7 +247,7 @@ const resolvers = {
       } catch (e) {
         throw new Error(`Deletion failed for ${id}.`);
       }
-    }
+    },
   },
   Movie: {
     async formats(movie) {
@@ -261,19 +257,19 @@ const resolvers = {
             model: Movie,
             as: "movies",
             where: {
-              id: movie.id
-            }
-          }
-        ]
+              id: movie.id,
+            },
+          },
+        ],
       });
 
       return formats.map(({ dataValues: { id, name, logo } }) => ({
         id,
         name,
-        logo
+        logo,
       }));
-    }
-  }
+    },
+  },
 };
 
 module.exports = resolvers;

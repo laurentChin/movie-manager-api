@@ -13,19 +13,18 @@ module.exports = {
       { user, model, environment }
     ) => {
       const userInstance = await model.user.findOne({
-        where: { email: emailArg }
+        where: { email: emailArg },
       });
 
       if (!userInstance)
         throw new ase.AuthenticationError("Authentication failed.");
 
       const {
-        dataValues: { active, passwordHash, salt, email }
+        dataValues: { active, passwordHash, salt, email },
       } = userInstance;
 
       if (!active) throw new ase.ForbiddenError("Account not validated");
 
-      console.log(passwordEncoder);
       if (passwordEncoder.encode(password, salt) !== passwordHash)
         throw new ase.AuthenticationError("Authentication failed.");
 
@@ -35,24 +34,24 @@ module.exports = {
         return {
           jwt: jwt.sign({ email }, environment.jwtSecretKey),
           user: {
-            email
-          }
+            email,
+          },
         };
       } catch (e) {
         throw new Error("Error during login process");
       }
-    }
+    },
   },
   Mutation: {
     validateToken: async (parent, { token }, { user, model }) => {
       const userInstance = await model.user.findOne({
-        where: { signInToken: token }
+        where: { signInToken: token },
       });
 
       if (!userInstance) throw new ase.UserInputError("Invalid token given");
 
       const {
-        dataValues: { email, signInTokenExpirationDate }
+        dataValues: { email, signInTokenExpirationDate },
       } = userInstance;
 
       if (isAfter(new Date(), parse(signInTokenExpirationDate)))
@@ -61,15 +60,15 @@ module.exports = {
       try {
         await userInstance.update({
           active: true,
-          signInToken: null
+          signInToken: null,
         });
 
         return {
-          email
+          email,
         };
       } catch (e) {
         throw new Error("Error during user update process");
       }
-    }
-  }
+    },
+  },
 };

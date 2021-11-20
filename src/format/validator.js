@@ -1,11 +1,7 @@
-function validate (format) {
-  if (!format.hasOwnProperty('name')) {
-    return false;
-  }
-
-  return true;
+function validate(format) {
+  return !!format.name;
 }
 
 module.exports = {
-  validate
+  validate,
 };

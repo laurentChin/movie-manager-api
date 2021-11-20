@@ -24,10 +24,10 @@ const apolloServer = new ase.ApolloServer({
     model: {
       user: User,
       Log,
-      Format
+      Format,
     },
-    environment
-  })
+    environment,
+  }),
 });
 
 const app = express();
@@ -39,7 +39,7 @@ app
   .use(cors())
   .use(
     jwt({ secret: environment.jwtSecretKey }).unless({
-      path: [/^\/uploads/, /^\/assets/, /^\/graphql/]
+      path: [/^\/uploads/, /^\/assets/, /^\/graphql/],
     })
   )
   .use("/formats", formatRouterFactory(express.Router(), Format))

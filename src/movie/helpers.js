@@ -6,14 +6,14 @@ const fs = require("fs");
 const request = require("request");
 
 const mapDataValues = ({
-  dataValues: { id, title, direction, releaseDate, poster, formats }
+  dataValues: { id, title, direction, releaseDate, poster, formats },
 }) => ({
   id,
   title,
   direction,
   releaseDate,
   poster,
-  formats
+  formats,
 });
 
 async function downloadFile(url) {
@@ -107,5 +107,9 @@ async function deletePoster(poster) {
 }
 
 module.exports = {
-  mapDataValues,downloadFile,handleFile,createPipeline,deletePoster
+  mapDataValues,
+  downloadFile,
+  handleFile,
+  createPipeline,
+  deletePoster,
 };
