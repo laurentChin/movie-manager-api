@@ -44,6 +44,9 @@
     "sources": "src/**/*.js",
     "verbose": true
   },
+  "prettier": {
+    "arrowParens": "avoid"
+  },
   "main": "app.js",
   "repository": {
     "type": "git",
