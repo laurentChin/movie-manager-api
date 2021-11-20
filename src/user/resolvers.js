@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const ase = require("apollo-server-express");
-const addHours = require("date-fns/add_hours");
+const addHours = require("date-fns/addHours");
 
 const { User, Movie } = require("../models");
 const { passwordEncoder } = require("../security");

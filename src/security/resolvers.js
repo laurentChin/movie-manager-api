@@ -1,5 +1,5 @@
 const ase = require("apollo-server-express");
-const isAfter = require("date-fns/is_after");
+const isAfter = require("date-fns/isAfter");
 const parse = require("date-fns/parse");
 const jwt = require("jsonwebtoken");
 
