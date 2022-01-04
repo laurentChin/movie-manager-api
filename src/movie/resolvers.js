@@ -105,16 +105,19 @@ const resolvers = {
   Mutation: {
     addMovie: async (
       parent,
-      { title, direction, releaseDate, poster, formats },
+      { title, direction, releaseDate, poster, posterUrl, formats },
       { user, environment }
     ) => {
       if (!user)
         throw new ase.ForbiddenError("You must be logged in to do this.");
 
       let posterFile = "";
-      if (typeof poster === "string") {
-        posterFile = await downloadFile(poster, environment.assetsPath);
-      } else {
+
+      if (posterUrl) {
+        posterFile = await downloadFile(posterUrl, environment.assetsPath);
+      }
+
+      if (poster) {
         const { filename, createReadStream } = await poster;
         posterFile = await handleFile({
           filename,
@@ -158,10 +161,10 @@ const resolvers = {
     },
     updateMovie: async (
       parent,
-      { id, title, direction, releaseDate, poster, formats },
+      { id, title, direction, releaseDate, poster, posterUrl, formats },
       { user, environment }
     ) => {
-      const movieInstance = await Movie.findById(id, {
+      const movieInstance = await Movie.findByPk(id, {
         include: [
           {
             model: Format,
@@ -190,11 +193,11 @@ const resolvers = {
           releaseDate,
         };
 
-        if (typeof poster === "string" && /^http[s]?:\/\//.test(poster)) {
-          values.poster = await downloadFile(poster, environment.assetsPath);
+        if (posterUrl && /^http[s]?:\/\//.test(posterUrl)) {
+          values.poster = await downloadFile(posterUrl, environment.assetsPath);
         }
 
-        if (typeof poster !== "string") {
+        if (poster) {
           const { filename, createReadStream } = await poster;
           values.poster = await handleFile({
             filename,
@@ -224,7 +227,7 @@ const resolvers = {
       }
     },
     deleteMovie: async (parent, { id }, { user, environment }) => {
-      const movieInstance = await Movie.findById(id, {
+      const movieInstance = await Movie.findByPk(id, {
         include: [
           {
             model: Format,

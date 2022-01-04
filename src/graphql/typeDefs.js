@@ -7,6 +7,8 @@ const { typeDef: formatTypeDef } = require("../format");
 const { typeDef: logTypeDef } = require("../log");
 
 const typeDefs = gql`
+  scalar Upload
+
   ${userTypeDef}
   ${movieTypeDef}
   ${securityTypeDef}
@@ -30,6 +32,7 @@ const typeDefs = gql`
       direction: String
       releaseDate: String
       poster: Upload
+      posterUrl: String
       formats: [ID]
     ): Movie
     updateMovie(
@@ -38,6 +41,7 @@ const typeDefs = gql`
       direction: String
       releaseDate: String
       poster: Upload
+      posterUrl: String
       formats: [ID]
     ): Movie
     deleteMovie(id: ID): Movie
