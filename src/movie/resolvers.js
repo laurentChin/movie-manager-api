@@ -17,6 +17,7 @@ const Sequelize = require("sequelize");
 
 const resolvers = {
   Query: {
+    movie: async (parent, { id }) => mapDataValues(await Movie.findByPk(id)),
     movies: async (parent, { offset, limit = LIMIT }, { user }) => {
       const movies = await Movie.findAll({
         offset,

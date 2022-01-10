@@ -19,6 +19,7 @@ const typeDefs = gql`
     getUser(email: String): User
     login(email: String, password: String): LoginResult
     movies(offset: Int, limit: Int): [Movie]
+    movie(id: Int): Movie
     search(terms: String): [Movie]
     explore(terms: String): [ExplorationResult]
     getFormats: [Format]
