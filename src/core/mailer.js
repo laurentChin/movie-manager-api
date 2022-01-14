@@ -1,8 +1,6 @@
-const  nodemailer = require("nodemailer");
-const env = require("../../environment");
+const nodemailer = require("nodemailer");
+const { mailer: mailerConfig } = require("../../environment");
 
-const transporter = nodemailer.createTransport({
-  ...env.mailer
-});
+const transporter = nodemailer.createTransport(mailerConfig);
 
 module.exports = transporter;

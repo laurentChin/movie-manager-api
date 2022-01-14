@@ -4,7 +4,7 @@ const addHours = require("date-fns/addHours");
 
 const { User, Movie } = require("../models");
 const { passwordEncoder } = require("../security");
-const { transporter } = require("../core/mailer");
+const transporter = require("../core/mailer");
 const { helpers: movieHelpers } = require("../movie");
 const { generateNaturalOrder } = require("../models/helpers");
 
@@ -96,7 +96,7 @@ const resolvers = {
           signInTokenExpirationDate: addHours(new Date(), 48),
         });
 
-        transporter.sendMail({
+        await transporter.sendMail({
           from: sender,
           to: email,
           subject,
