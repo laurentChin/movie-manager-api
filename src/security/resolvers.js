@@ -1,6 +1,6 @@
 const ase = require("apollo-server-express");
 const isAfter = require("date-fns/isAfter");
-const parse = require("date-fns/parse");
+const parseISO = require("date-fns/parseISO");
 const jwt = require("jsonwebtoken");
 
 const passwordEncoder = require("./passwordEncoder");
@@ -54,7 +54,9 @@ module.exports = {
         dataValues: { email, signInTokenExpirationDate },
       } = userInstance;
 
-      if (isAfter(new Date(), parse(signInTokenExpirationDate)))
+      if (
+        isAfter(new Date(), parseISO(signInTokenExpirationDate.toISOString()))
+      )
         throw new ase.UserInputError("Invalid token given");
 
       try {
