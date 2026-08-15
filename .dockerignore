@@ -1,0 +1,11 @@
+node_modules
+.git
+.github
+tests
+environment.json
+environment-test.json
+public/uploads
+npm-debug.log
+*.log
+.DS_Store
+.eslintcache

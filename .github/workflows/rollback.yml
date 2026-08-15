@@ -1,0 +1,45 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to redeploy (git SHA of a previous successful deploy, or 'latest')"
+        required: true
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Redeploy previous image over SSH and health-check
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd /opt/movie-manager-api
+            echo "${{ secrets.GHCR_READ_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "IMAGE_TAG=${{ inputs.image_tag }}" > .env
+            docker compose pull
+            docker compose up -d
+
+            # No db:sync here: rolling back to an older image should not
+            # re-run schema sync against a newer schema shape.
+            PORT=$(node -e "console.log(require('./environment.json').port)")
+            for i in $(seq 1 10); do
+              if curl -sf -X POST "http://localhost:$PORT/graphql" \
+                -H "Content-Type: application/json" \
+                -d '{"query":"{ __typename }"}' > /dev/null; then
+                echo "Health check passed"
+                exit 0
+              fi
+              sleep 3
+            done
+            echo "Health check failed after rollback"
+            exit 1
