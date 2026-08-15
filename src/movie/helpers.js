@@ -3,6 +3,7 @@ const util = require("util");
 const uuid = require("uuid");
 const fs = require("fs");
 const axios = require("axios");
+const { Jimp } = require("jimp");
 
 const mapDataValues = ({
   dataValues: { id, title, direction, releaseDate, poster, formats },
@@ -15,30 +16,28 @@ const mapDataValues = ({
   formats,
 });
 
-async function downloadFile(url, assetsPath) {
-  const { filepath, pipeline } = await createPipeline(url, assetsPath);
-  const response = await axios.get(url, { responseType: "stream" });
-  response.data.pipe(pipeline);
+async function streamToBuffer(stream) {
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
 
-  return filepath;
+  return Buffer.concat(chunks);
+}
+
+async function downloadFile(url, assetsPath) {
+  const response = await axios.get(url, { responseType: "arraybuffer" });
+
+  return processImage(Buffer.from(response.data), url, assetsPath);
 }
 
 async function handleFile({ filename, createReadStream, assetsPath }) {
-  const readStream = createReadStream();
-  const { filepath, pipeline } = await createPipeline(filename, assetsPath);
-  readStream.pipe(pipeline);
+  const buffer = await streamToBuffer(createReadStream());
 
-  return filepath;
+  return processImage(buffer, filename, assetsPath);
 }
 
-async function createPipeline(filename, assetsPath) {
-  // Loaded lazily: sharp's prebuilt native binary requires AVX, which the
-  // production host's CPU doesn't have. Requiring it at module load time
-  // crashed the whole process (SIGILL) before the server could even start.
-  // Deferring it here means the rest of the app works, and only poster
-  // upload/resize fails, until the underlying libvips binary is rebuilt
-  // without AVX.
-  const sharp = require("sharp");
+async function processImage(buffer, filename, assetsPath) {
   const [, extension] = /([a-z]{2,})$/.exec(filename);
   const name = uuid.v4();
   const finalName = `${name}.${extension}`;
@@ -61,22 +60,19 @@ async function createPipeline(filename, assetsPath) {
   }
 
   const targetDir = path.join(uploadDir, root, sub);
-  const smallScreenWriteStream = fs.createWriteStream(
-    path.join(targetDir, `${name}-small.${extension}`)
-  );
-  const mediumScreenWriteStream = fs.createWriteStream(
-    path.join(targetDir, `${name}-medium.${extension}`)
-  );
-  const writeStream = fs.createWriteStream(path.join(targetDir, finalName));
-  const pipeline = sharp().resize();
-  pipeline.pipe(writeStream);
-  pipeline.clone().resize(50, null).pipe(smallScreenWriteStream);
-  pipeline.clone().resize(150, null).pipe(mediumScreenWriteStream);
+  const image = await Jimp.read(buffer);
 
-  return {
-    filepath: path.join(root, sub, finalName),
-    pipeline,
-  };
+  await image.write(path.join(targetDir, finalName));
+  await image
+    .clone()
+    .resize({ w: 50 })
+    .write(path.join(targetDir, `${name}-small.${extension}`));
+  await image
+    .clone()
+    .resize({ w: 150 })
+    .write(path.join(targetDir, `${name}-medium.${extension}`));
+
+  return path.join(root, sub, finalName);
 }
 
 async function deletePoster(poster, assetsPath) {
@@ -109,6 +105,5 @@ module.exports = {
   mapDataValues,
   downloadFile,
   handleFile,
-  createPipeline,
   deletePoster,
 };
