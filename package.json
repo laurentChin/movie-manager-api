@@ -8,7 +8,7 @@
     "@graphql-tools/schema": "^8.3.1",
     "apollo-server-core": "^3.6.1",
     "apollo-server-express": "^3.6.1",
-    "axios": "^0.21.2",
+    "axios": "^1.19.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "date-fns": "^2.23.0",
@@ -21,8 +21,6 @@
     "nodemailer": "^6.6.3",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
-    "request": "^2.88.2",
-    "request-promise-native": "^1.0.9",
     "sequelize": "^6.6.5",
     "sharp": "^0.29.3",
     "uuid": "^8.3.2"
