@@ -1,0 +1,12 @@
+services:
+  api:
+    image: ghcr.io/laurentchin/movie-manager-api:${IMAGE_TAG:-latest}
+    container_name: movie-manager-api
+    # Postgres runs on the host, and environment.json's database.config.host
+    # is "localhost" -- host networking keeps that working unchanged, and
+    # exposes the app's port directly on the host like pm2 did before.
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./environment.json:/app/environment.json:ro
+      - ./uploads:/app/public/uploads
