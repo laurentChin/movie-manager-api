@@ -1,8 +1,8 @@
-const ase  = require("apollo-server-express");
+const gql = require("graphql-tag");
 
-module.exports = ase.gql`
+module.exports = gql`
   type LoginResult {
-    jwt: String,
+    jwt: String
     user: User
   }
 `;

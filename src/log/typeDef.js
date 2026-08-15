@@ -1,11 +1,11 @@
-const ase = require("apollo-server-express");
+const gql = require("graphql-tag");
 
-const typeDef = ase.gql`
+const typeDef = gql`
   type Log {
-    id: ID,
-    action: String,
-    model: String,
-    payload: String,
+    id: ID
+    action: String
+    model: String
+    payload: String
     createdAt: String
   }
 `;

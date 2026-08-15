@@ -7,8 +7,11 @@ const path = require("path");
 const fs = require("fs");
 
 const http = require("http");
-const ase = require("apollo-server-express");
-const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
+const { ApolloServer } = require("@apollo/server");
+const { expressMiddleware } = require("@as-integrations/express5");
+const {
+  ApolloServerPluginDrainHttpServer,
+} = require("@apollo/server/plugin/drainHttpServer");
 const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
 
 const environment = require("../environment");
@@ -22,21 +25,31 @@ async function startApolloServer(typeDefs, resolvers) {
   const app = express();
 
   const httpServer = http.createServer(app);
-  const server = new ase.ApolloServer({
+  const server = new ApolloServer({
     typeDefs,
     resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-    context: ({ req }) => ({
-      user: req.headers.authorization
-        ? jsonwebtoken.decode(req.headers.authorization.replace("Bearer ", ""))
-        : null,
-      model: {
-        user: User,
-        Log,
-        Format,
-      },
-      environment,
-    }),
+    // Apollo's default CSRF prevention blocks "simple request" content
+    // types (multipart/form-data, x-www-form-urlencoded, text/plain)
+    // unless a preflight-triggering header is present. It guards against
+    // CSRF via ambient credentials (cookies) attached automatically by the
+    // browser -- this API has none: auth is a bearer JWT the client sets
+    // explicitly, never sent automatically cross-origin. graphql-upload's
+    // multipart uploads (and apollo-upload-client on the PWA side) don't
+    // add that header, so leaving this on would block real uploads too.
+    csrfPrevention: false,
+  });
+
+  const context = async ({ req }) => ({
+    user: req.headers.authorization
+      ? jsonwebtoken.decode(req.headers.authorization.replace("Bearer ", ""))
+      : null,
+    model: {
+      user: User,
+      Log,
+      Format,
+    },
+    environment,
   });
 
   await server.start();
@@ -45,11 +58,7 @@ async function startApolloServer(typeDefs, resolvers) {
     .use(bodyParser.json({ limit: "8mb" }))
     .use(cors())
     .use(graphqlUploadExpress())
-    .use(
-      server.getMiddleware({
-        cors: false,
-      })
-    )
+    .use("/graphql", expressMiddleware(server, { context }))
     .use(
       jwt({ secret: environment.jwtSecretKey, algorithms: ["HS256"] }).unless({
         path: [/^\/uploads/, /^\/assets/, /^\/graphql/],
