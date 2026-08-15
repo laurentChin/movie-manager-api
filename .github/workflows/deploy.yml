@@ -63,9 +63,11 @@ jobs:
             docker compose run --rm api npm run db:sync
             docker compose up -d
 
-            # environment.json already lives here for the pm2 deploy today,
-            # so node is a safe assumption on this host.
-            PORT=$(node -e "console.log(require('./environment.json').port)")
+            # Read the port via the container itself, not the host -- the
+            # host has no node installed (that assumption was wrong: it
+            # only ever had pm2/node for the old, now-replaced deploy
+            # method, and on this box there wasn't even that).
+            PORT=$(docker compose exec -T api node -e "console.log(require('./environment.json').port)")
             for i in $(seq 1 10); do
               if curl -sf -X POST "http://localhost:$PORT/graphql" \
                 -H "Content-Type: application/json" \
