@@ -1,10 +1,10 @@
 # Deployment
 
-CI/CD runs through GitHub Actions (`.github/workflows/ci.yml`, `deploy.yml`, `rollback.yml`). On every push to `master` that passes CI, a Docker image is built, pushed to GitHub Container Registry (`ghcr.io/laurentchin/movie-manager-api`), tagged with the commit SHA (and `latest`), then deployed to the production server over SSH.
+CI/CD runs through GitHub Actions (`.github/workflows/ci.yml`, `deploy.yml`, `rollback.yml`). On every push to `master` that passes CI, a Docker image is built, pushed to GitHub Container Registry (`ghcr.io/<owner>/movie-manager-api`), tagged with the commit SHA (and `latest`), then deployed to the production server over SSH.
 
 ## One-time server setup
 
-These steps have to be done manually on the production server (`kimsufi`) — nothing here can be run from CI.
+These steps have to be done manually on the production server — nothing here can be run from CI.
 
 1. **Install Docker + the Compose plugin.**
 
@@ -21,9 +21,9 @@ These steps have to be done manually on the production server (`kimsufi`) — no
    ```bash
    ssh-keygen -t ed25519 -C "github-actions@movie-manager-api" -f ~/.ssh/movie_manager_deploy -N ""
    ```
-   `deploy` has no password and no key yet, so plain `ssh-copy-id deploy@<host>` fails with `Permission denied (publickey)` — there's nothing to authenticate with as `deploy` yet. Install the public key through an existing admin account instead (substitute your actual admin user for `laurent`):
+   `deploy` has no password and no key yet, so plain `ssh-copy-id deploy@<host>` fails with `Permission denied (publickey)` — there's nothing to authenticate with as `deploy` yet. Install the public key through an existing admin account instead:
    ```bash
-   cat ~/.ssh/movie_manager_deploy.pub | ssh laurent@<server-host> "sudo mkdir -p /home/deploy/.ssh && sudo tee -a /home/deploy/.ssh/authorized_keys > /dev/null && sudo chmod 700 /home/deploy/.ssh && sudo chmod 600 /home/deploy/.ssh/authorized_keys && sudo chown -R deploy:deploy /home/deploy/.ssh"
+   cat ~/.ssh/movie_manager_deploy.pub | ssh <admin-user>@<server-host> "sudo mkdir -p /home/deploy/.ssh && sudo tee -a /home/deploy/.ssh/authorized_keys > /dev/null && sudo chmod 700 /home/deploy/.ssh && sudo chmod 600 /home/deploy/.ssh/authorized_keys && sudo chown -R deploy:deploy /home/deploy/.ssh"
    ```
    Verify it worked:
    ```bash
@@ -35,15 +35,15 @@ These steps have to be done manually on the production server (`kimsufi`) — no
 
 4. **Create the deploy directory, owned by `deploy`:**
    ```bash
-   sudo mkdir -p /opt/movie-manager-api/uploads
-   sudo chown -R deploy:deploy /opt/movie-manager-api
+   sudo mkdir -p <deploy_path>/uploads
+   sudo chown -R deploy:deploy <deploy_path>
    ```
 
-5. **Copy `docker-compose.yml`** from this repo into `/opt/movie-manager-api/`.
+5. **Copy `docker-compose.yml`** from this repo into `<deploy_path>`.
 
-6. **Create `/opt/movie-manager-api/environment.json`** with production config — same shape as the `environment.json` used today for the pm2 deploy, but `assetsPath` should point at the path *inside the container*: `/app/public`. Keep `database.config.host` as `"localhost"` — the container runs with `network_mode: host`, so it reaches Postgres exactly like the pm2 process does today.
+6. **Create `<deploy_path>/environment.json`** with production config — `assetsPath` should point at the path *inside the container*: `/app/public`. Keep `database.config.host` as `"localhost"` — the container runs with `network_mode: host`, so it reaches Postgres exactly like a host process would.
 
-7. **Move existing uploaded posters** into `/opt/movie-manager-api/uploads/` (the directory shipit currently keeps as a shared dir), so they carry over.
+7. **Move existing uploaded posters** into `<deploy_path>/uploads/`, so they carry over from whatever deploy mechanism was used before.
 
 8. **Create a GitHub Personal Access Token** (scope: `read:packages`) so the server can `docker login ghcr.io` and pull images from this private repo.
 
@@ -60,7 +60,7 @@ Add these under Settings → Secrets and variables → Actions:
 
 ## Rollback
 
-Actions tab → **Rollback** workflow → *Run workflow* → enter the image tag to redeploy (a previous commit SHA, visible in the `deploy.yml` run history or in the [package versions](https://github.com/laurentChin/movie-manager-api/pkgs/container/movie-manager-api) on GitHub). No rebuild — it pulls the already-published image and restarts the container. `db:sync` is deliberately **not** run on rollback, to avoid syncing an older schema against a newer database state.
+Actions tab → **Rollback** workflow → *Run workflow* → enter the image tag to redeploy (a previous commit SHA, visible in the `deploy.yml` run history or in the package versions page on GitHub for this repo). No rebuild — it pulls the already-published image and restarts the container. `db:sync` is deliberately **not** run on rollback, to avoid syncing an older schema against a newer database state.
 
 ## What's not migrated yet
 
