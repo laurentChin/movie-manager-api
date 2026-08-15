@@ -11,7 +11,10 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  IMAGE: ghcr.io/${{ github.repository }}
+  # Must be lowercase to be a valid Docker tag (github.repository keeps the
+  # real casing, "laurentChin", which docker/build-push-action rejects) --
+  # and must match docker-compose.yml's hardcoded image reference.
+  IMAGE: ghcr.io/laurentchin/movie-manager-api
 
 jobs:
   build-and-push:
