@@ -62,6 +62,3 @@ Add these under Settings → Secrets and variables → Actions:
 
 Actions tab → **Rollback** workflow → *Run workflow* → enter the image tag to redeploy (a previous commit SHA, visible in the `deploy.yml` run history or in the package versions page on GitHub for this repo). No rebuild — it pulls the already-published image and restarts the container. `db:sync` is deliberately **not** run on rollback, to avoid syncing an older schema against a newer database state.
 
-## What's not migrated yet
-
-`shipitfile.js` (the old `shipit-cli` pm2-based deploy) is still in the repo, kept as a fallback until the pipeline above is confirmed working in production. Remove it (and the `shipit-*` devDependencies) once a real deploy + rollback have both been exercised successfully.
