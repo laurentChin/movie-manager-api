@@ -1,6 +1,5 @@
 const path = require("path");
 const util = require("util");
-const sharp = require("sharp");
 const uuid = require("uuid");
 const fs = require("fs");
 const axios = require("axios");
@@ -33,6 +32,13 @@ async function handleFile({ filename, createReadStream, assetsPath }) {
 }
 
 async function createPipeline(filename, assetsPath) {
+  // Loaded lazily: sharp's prebuilt native binary requires AVX, which the
+  // production host's CPU doesn't have. Requiring it at module load time
+  // crashed the whole process (SIGILL) before the server could even start.
+  // Deferring it here means the rest of the app works, and only poster
+  // upload/resize fails, until the underlying libvips binary is rebuilt
+  // without AVX.
+  const sharp = require("sharp");
   const [, extension] = /([a-z]{2,})$/.exec(filename);
   const name = uuid.v4();
   const finalName = `${name}.${extension}`;
