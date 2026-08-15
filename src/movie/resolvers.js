@@ -1,5 +1,5 @@
 const ase = require("apollo-server-express");
-const rp = require("request-promise-native");
+const axios = require("axios");
 
 const { Format, Movie, User } = require("../models");
 const {
@@ -57,30 +57,30 @@ const resolvers = {
     },
     explore: async (parent, { terms }, { user, model, environment }) => {
       /* eslint-disable camelcase */
-      const { results } = JSON.parse(
-        await rp(
-          `${MOVIE_DB_API_URL}/search/movie?api_key=${
-            environment.MOVIE_DB_API_KEY
-          }&query=${encodeURIComponent(terms)}&region=FR&language=fr-FR`
-        )
+      const {
+        data: { results },
+      } = await axios.get(
+        `${MOVIE_DB_API_URL}/search/movie?api_key=${
+          environment.MOVIE_DB_API_KEY
+        }&query=${encodeURIComponent(terms)}&region=FR&language=fr-FR`
       );
 
       const movies = [];
       const {
-        images: { secure_base_url },
-      } = JSON.parse(
-        await rp(
-          `${MOVIE_DB_API_URL}/configuration?api_key=${environment.MOVIE_DB_API_KEY}`
-        )
+        data: {
+          images: { secure_base_url },
+        },
+      } = await axios.get(
+        `${MOVIE_DB_API_URL}/configuration?api_key=${environment.MOVIE_DB_API_KEY}`
       );
 
       for (const result of results) {
         const { id, title, poster_path, release_date: releaseDate } = result;
         const movie = { title, releaseDate };
-        const { crew } = JSON.parse(
-          await rp(
-            `${MOVIE_DB_API_URL}/movie/${id}/credits?api_key=${environment.MOVIE_DB_API_KEY}`
-          )
+        const {
+          data: { crew },
+        } = await axios.get(
+          `${MOVIE_DB_API_URL}/movie/${id}/credits?api_key=${environment.MOVIE_DB_API_KEY}`
         );
 
         const direction = crew.filter(member => {

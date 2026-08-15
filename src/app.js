@@ -1,5 +1,5 @@
 const express = require("express");
-const jwt = require("express-jwt");
+const { expressjwt: jwt } = require("express-jwt");
 const jsonwebtoken = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -9,7 +9,7 @@ const fs = require("fs");
 const http = require("http");
 const ase = require("apollo-server-express");
 const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
-const { graphqlUploadExpress } = require("graphql-upload");
+const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
 
 const environment = require("../environment");
 

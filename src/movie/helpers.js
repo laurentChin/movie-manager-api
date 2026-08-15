@@ -3,7 +3,7 @@ const util = require("util");
 const sharp = require("sharp");
 const uuid = require("uuid");
 const fs = require("fs");
-const request = require("request");
+const axios = require("axios");
 
 const mapDataValues = ({
   dataValues: { id, title, direction, releaseDate, poster, formats },
@@ -18,7 +18,8 @@ const mapDataValues = ({
 
 async function downloadFile(url, assetsPath) {
   const { filepath, pipeline } = await createPipeline(url, assetsPath);
-  request(url).pipe(pipeline);
+  const response = await axios.get(url, { responseType: "stream" });
+  response.data.pipe(pipeline);
 
   return filepath;
 }
