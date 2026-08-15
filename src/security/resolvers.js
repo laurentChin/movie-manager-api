@@ -1,4 +1,4 @@
-const ase = require("apollo-server-express");
+const { GraphQLError } = require("graphql");
 const isAfter = require("date-fns/isAfter");
 const parseISO = require("date-fns/parseISO");
 const jwt = require("jsonwebtoken");
@@ -17,16 +17,23 @@ module.exports = {
       });
 
       if (!userInstance)
-        throw new ase.AuthenticationError("Authentication failed.");
+        throw new GraphQLError("Authentication failed.", {
+          extensions: { code: "UNAUTHENTICATED" },
+        });
 
       const {
         dataValues: { active, passwordHash, salt, email },
       } = userInstance;
 
-      if (!active) throw new ase.ForbiddenError("Account not validated");
+      if (!active)
+        throw new GraphQLError("Account not validated", {
+          extensions: { code: "FORBIDDEN" },
+        });
 
       if (passwordEncoder.encode(password, salt) !== passwordHash)
-        throw new ase.AuthenticationError("Authentication failed.");
+        throw new GraphQLError("Authentication failed.", {
+          extensions: { code: "UNAUTHENTICATED" },
+        });
 
       try {
         await userInstance.update({ lastLogin: new Date() });
@@ -48,7 +55,10 @@ module.exports = {
         where: { signInToken: token },
       });
 
-      if (!userInstance) throw new ase.UserInputError("Invalid token given");
+      if (!userInstance)
+        throw new GraphQLError("Invalid token given", {
+          extensions: { code: "BAD_USER_INPUT" },
+        });
 
       const {
         dataValues: { email, signInTokenExpirationDate },
@@ -57,7 +67,9 @@ module.exports = {
       if (
         isAfter(new Date(), parseISO(signInTokenExpirationDate.toISOString()))
       )
-        throw new ase.UserInputError("Invalid token given");
+        throw new GraphQLError("Invalid token given", {
+          extensions: { code: "BAD_USER_INPUT" },
+        });
 
       try {
         await userInstance.update({

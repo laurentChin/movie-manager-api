@@ -1,4 +1,4 @@
-const ase = require("apollo-server-express");
+const { GraphQLError } = require("graphql");
 const axios = require("axios");
 
 const { Format, Movie, User } = require("../models");
@@ -110,7 +110,9 @@ const resolvers = {
       { user, environment }
     ) => {
       if (!user)
-        throw new ase.ForbiddenError("You must be logged in to do this.");
+        throw new GraphQLError("You must be logged in to do this.", {
+          extensions: { code: "FORBIDDEN" },
+        });
 
       let posterFile = "";
 
@@ -178,13 +180,18 @@ const resolvers = {
       });
 
       if (!movieInstance) {
-        throw new ase.ApolloError("Not found", 404);
+        // extensions.code must stay the number 404: movie-manager-pwa's
+        // Movie/Actions.js checks graphQLErrors[0].extensions.code === 404
+        // to treat an already-deleted movie as a silent success.
+        throw new GraphQLError("Not found", {
+          extensions: { code: 404 },
+        });
       }
 
       if (user.email !== movieInstance.get("User").get("email"))
-        throw new ase.ForbiddenError(
-          "You are not allowed to update this movie."
-        );
+        throw new GraphQLError("You are not allowed to update this movie.", {
+          extensions: { code: "FORBIDDEN" },
+        });
 
       try {
         await movieInstance.setFormats(formats);
@@ -241,13 +248,18 @@ const resolvers = {
       });
 
       if (!movieInstance) {
-        throw new ase.ApolloError("Not found", 404);
+        // extensions.code must stay the number 404: movie-manager-pwa's
+        // Movie/Actions.js checks graphQLErrors[0].extensions.code === 404
+        // to treat an already-deleted movie as a silent success.
+        throw new GraphQLError("Not found", {
+          extensions: { code: 404 },
+        });
       }
 
       if (user.email !== movieInstance.get("User").get("email"))
-        throw new ase.ForbiddenError(
-          "You are not allowed to delete this movie."
-        );
+        throw new GraphQLError("You are not allowed to delete this movie.", {
+          extensions: { code: "FORBIDDEN" },
+        });
 
       try {
         if (movieInstance.get("poster")) {

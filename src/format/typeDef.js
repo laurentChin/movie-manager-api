@@ -1,9 +1,9 @@
-const ase = require("apollo-server-express");
+const gql = require("graphql-tag");
 
-const typeDef = ase.gql`
+const typeDef = gql`
   type Format {
-    id: ID,
-    name: String,
+    id: ID
+    name: String
     logo: String
   }
 `;

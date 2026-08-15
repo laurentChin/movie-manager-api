@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const ase = require("apollo-server-express");
+const { GraphQLError } = require("graphql");
 const addHours = require("date-fns/addHours");
 
 const { User, Movie } = require("../models");
@@ -13,9 +13,9 @@ const resolvers = {
     getUser: async (parent, args, { user }) => {
       const { email } = args;
       if (!user || user.email !== args.email)
-        throw new ase.ForbiddenError(
-          "You are not allowed to process this action."
-        );
+        throw new GraphQLError("You are not allowed to process this action.", {
+          extensions: { code: "FORBIDDEN" },
+        });
 
       const userInstance = await User.findOne({
         where: {
@@ -78,7 +78,10 @@ const resolvers = {
         where: { email },
       });
 
-      if (existingUser) throw new ase.UserInputError("Cannot create the user");
+      if (existingUser)
+        throw new GraphQLError("Cannot create the user", {
+          extensions: { code: "BAD_USER_INPUT" },
+        });
 
       const salt = crypto
         .randomBytes(Math.round(Math.random() * 100))
@@ -107,7 +110,9 @@ const resolvers = {
           email,
         };
       } catch (e) {
-        throw new ase.ApolloError("An error occured during creation process");
+        throw new GraphQLError("An error occured during creation process", {
+          extensions: { code: "INTERNAL_SERVER_ERROR" },
+        });
       }
     },
   },
