@@ -9,7 +9,7 @@ const fs = require("fs");
 const http = require("http");
 const ase = require("apollo-server-express");
 const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
-const { graphqlUploadExpress } = require("graphql-upload");
+const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
 
 const environment = require("../environment");
 

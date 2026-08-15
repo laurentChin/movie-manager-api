@@ -1,4 +1,4 @@
-const { GraphQLUpload } = require("graphql-upload");
+const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
 
 const { resolvers: userResolvers } = require("../user");
 const { resolvers: securityResolver } = require("../security");
