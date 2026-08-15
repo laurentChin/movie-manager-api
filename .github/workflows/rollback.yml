@@ -31,7 +31,10 @@ jobs:
 
             # No db:sync here: rolling back to an older image should not
             # re-run schema sync against a newer schema shape.
-            PORT=$(node -e "console.log(require('./environment.json').port)")
+
+            # Read the port via the container itself -- the host has no
+            # node installed.
+            PORT=$(docker compose exec -T api node -e "console.log(require('./environment.json').port)")
             for i in $(seq 1 10); do
               if curl -sf -X POST "http://localhost:$PORT/graphql" \
                 -H "Content-Type: application/json" \
