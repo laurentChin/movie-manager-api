@@ -2,6 +2,8 @@
 
 CI/CD runs through GitHub Actions (`.github/workflows/ci.yml`, `deploy.yml`, `rollback.yml`). On every push to `master` that passes CI, a Docker image is built, pushed to GitHub Container Registry (`ghcr.io/<owner>/movie-manager-api`), tagged with the commit SHA (and `latest`), then deployed to the production server over SSH.
 
+Deploy is chained off CI's `workflow_run` completing, so it only fires for pushes CI actually ran for. CI's `push` trigger is restricted to paths that affect the running application (`src/**`, `scripts/**`, `public/**`, `environment.js`, `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `package.json`, `package-lock.json`) — changes limited to docs, tests, lint/editor config, or CI workflows themselves don't trigger a deploy. PRs still run CI unconditionally, for visibility.
+
 ## One-time server setup
 
 These steps have to be done manually on the production server — nothing here can be run from CI.
