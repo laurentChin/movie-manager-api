@@ -21,11 +21,15 @@ These steps have to be done manually on the production server (`kimsufi`) — no
    ```bash
    ssh-keygen -t ed25519 -C "github-actions@movie-manager-api" -f ~/.ssh/movie_manager_deploy -N ""
    ```
-   Then copy the **public** half to the server, for the `deploy` user specifically:
+   `deploy` has no password and no key yet, so plain `ssh-copy-id deploy@<host>` fails with `Permission denied (publickey)` — there's nothing to authenticate with as `deploy` yet. Install the public key through an existing admin account instead (substitute your actual admin user for `laurent`):
    ```bash
-   ssh-copy-id -i ~/.ssh/movie_manager_deploy.pub deploy@<server-host>
+   cat ~/.ssh/movie_manager_deploy.pub | ssh laurent@<server-host> "sudo mkdir -p /home/deploy/.ssh && sudo tee -a /home/deploy/.ssh/authorized_keys > /dev/null && sudo chmod 700 /home/deploy/.ssh && sudo chmod 600 /home/deploy/.ssh/authorized_keys && sudo chown -R deploy:deploy /home/deploy/.ssh"
    ```
-   (If `ssh-copy-id` isn't available or `deploy` can't log in yet to receive it, log in as an admin account instead and append the `.pub` file's contents to `/home/deploy/.ssh/authorized_keys` manually, then `chown -R deploy:deploy /home/deploy/.ssh && chmod 700 /home/deploy/.ssh && chmod 600 /home/deploy/.ssh/authorized_keys`.)
+   Verify it worked:
+   ```bash
+   ssh -i ~/.ssh/movie_manager_deploy deploy@<server-host> "whoami && groups"
+   ```
+   Should print `deploy` and a group list including `docker`.
 
    The **private** half (`~/.ssh/movie_manager_deploy`, no `.pub`) is what goes into the `DEPLOY_SSH_KEY` GitHub secret below — never the public one.
 
