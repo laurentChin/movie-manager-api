@@ -21,7 +21,7 @@ const typeDefs = gql`
     movies(offset: Int, limit: Int): [Movie]
     movie(id: Int): Movie
     search(terms: String): [Movie]
-    explore(terms: String): [ExplorationResult]
+    explore(terms: String, byDirector: Boolean): [ExplorationResult]
     getFormats: [Format]
     logs(createdAt: String): [Log]
   }

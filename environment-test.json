@@ -7,5 +7,15 @@
     "appId": 138483919580948,
     "redirectUri": "",
     "appSecret": "appsecret"
+  },
+  "database": {
+    "name": "movie-manager-test",
+    "username": "test",
+    "password": "test",
+    "config": {
+      "host": "localhost",
+      "dialect": "postgres",
+      "logging": false
+    }
   }
 }

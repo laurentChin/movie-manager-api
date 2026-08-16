@@ -15,6 +15,78 @@ const { CREATE, UPDATE, DELETE } = require("../log/constants");
 
 const Sequelize = require("sequelize");
 
+/* eslint-disable camelcase */
+async function getPosterBaseUrl(environment) {
+  const {
+    data: {
+      images: { secure_base_url },
+    },
+  } = await axios.get(
+    `${MOVIE_DB_API_URL}/configuration?api_key=${environment.MOVIE_DB_API_KEY}`
+  );
+
+  return secure_base_url;
+}
+/* eslint-enable camelcase */
+
+async function getMovieDirectors(movieId, environment) {
+  const {
+    data: { crew },
+  } = await axios.get(
+    `${MOVIE_DB_API_URL}/movie/${movieId}/credits?api_key=${environment.MOVIE_DB_API_KEY}`
+  );
+
+  return crew.filter(member => member.job.toLowerCase() === "director");
+}
+
+function toExplorationResult(result, directors, posterBaseUrl) {
+  /* eslint-disable camelcase */
+  const { title, poster_path, release_date: releaseDate } = result;
+
+  return {
+    title,
+    releaseDate,
+    direction: directors.map(director => director.name).join(", "),
+    poster: poster_path ? `${posterBaseUrl}original${poster_path}` : "",
+  };
+  /* eslint-enable camelcase */
+}
+
+async function exploreByDirector(terms, environment) {
+  const {
+    data: { results: people },
+  } = await axios.get(
+    `${MOVIE_DB_API_URL}/search/person?api_key=${
+      environment.MOVIE_DB_API_KEY
+    }&query=${encodeURIComponent(terms)}&region=FR&language=fr-FR`
+  );
+
+  const [director] = people;
+
+  if (!director) return [];
+
+  const {
+    data: { results },
+  } = await axios.get(
+    `${MOVIE_DB_API_URL}/discover/movie?api_key=${
+      environment.MOVIE_DB_API_KEY
+    }&with_crew=${director.id}&region=FR&language=fr-FR`
+  );
+
+  const posterBaseUrl = await getPosterBaseUrl(environment);
+  const movies = [];
+
+  for (const result of results) {
+    const directors = await getMovieDirectors(result.id, environment);
+
+    if (!directors.some(member => member.id === director.id)) continue;
+
+    movies.push(toExplorationResult(result, directors, posterBaseUrl));
+  }
+
+  return movies;
+}
+
 const resolvers = {
   Query: {
     movie: async (parent, { id }) => mapDataValues(await Movie.findByPk(id)),
@@ -55,8 +127,13 @@ const resolvers = {
 
       return movies.map(mapDataValues);
     },
-    explore: async (parent, { terms }, { user, model, environment }) => {
-      /* eslint-disable camelcase */
+    explore: async (
+      parent,
+      { terms, byDirector = false },
+      { environment }
+    ) => {
+      if (byDirector) return exploreByDirector(terms, environment);
+
       const {
         data: { results },
       } = await axios.get(
@@ -65,40 +142,14 @@ const resolvers = {
         }&query=${encodeURIComponent(terms)}&region=FR&language=fr-FR`
       );
 
+      const posterBaseUrl = await getPosterBaseUrl(environment);
       const movies = [];
-      const {
-        data: {
-          images: { secure_base_url },
-        },
-      } = await axios.get(
-        `${MOVIE_DB_API_URL}/configuration?api_key=${environment.MOVIE_DB_API_KEY}`
-      );
 
       for (const result of results) {
-        const { id, title, poster_path, release_date: releaseDate } = result;
-        const movie = { title, releaseDate };
-        const {
-          data: { crew },
-        } = await axios.get(
-          `${MOVIE_DB_API_URL}/movie/${id}/credits?api_key=${environment.MOVIE_DB_API_KEY}`
-        );
+        const directors = await getMovieDirectors(result.id, environment);
 
-        const direction = crew.filter(member => {
-          return member.job.toLowerCase() === "director";
-        });
-
-        movie.direction = direction
-          .reduce((acc, director) => `${acc}, ${director.name}`, "")
-          .replace(", ", "");
-
-        movie.poster = poster_path
-          ? `${secure_base_url}original${poster_path}`
-          : "";
-
-        movies.push(movie);
+        movies.push(toExplorationResult(result, directors, posterBaseUrl));
       }
-
-      /* eslint-enable camelcase */
 
       return movies;
     },
